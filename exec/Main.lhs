@@ -7,7 +7,7 @@ We will now use the library form Section \ref{sec:Preliminaries} in a program.
 \begin{code}
 module Main where
 
-import TopoPreliminaries
+import Topology
 
 main :: IO ()
 main = do
