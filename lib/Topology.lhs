@@ -79,6 +79,30 @@ isClopen :: (Eq a) => [a] -> TopSpace a -> Bool
 isClopen x ts = isOpen x ts && isClosed x ts
 \end{code}
 
+% TODO: subbasis and basis?
+
+The \textit{interior} of a subset $S$ of a topological space $X$
+is the union of all open subsets of $S$.
+
+The \textit{closure} of a subset $S$ of a topological space $X$
+is the intersection of all closed subsets containing $S$. 
+
+\begin{code}
+powerset :: [a] -> [[a]]
+powerset [] = [[]]
+powerset (x:xs) = [x:ps | ps <- powerset xs] ++ powerset xs
+
+-- Equivalent property taken from https://en.wikipedia.org/wiki/Subset#Properties
+isSubsetEq :: (Eq a) => [a] -> [a] -> Bool
+isSubsetEq xs ys = (xs `intersect` ys) == xs
+
+interior :: (Eq a) => [a] -> TopSpace a -> [a]
+interior xs ts = concat [ u | u <- top ts, isSubsetEq u xs]
+
+closure :: (Eq a) => [a] -> TopSpace a -> [a]
+closure xs ts = concat [ u | u <- closeds ts, isSubsetEq xs u]
+
+\end{code}
 
 
 
