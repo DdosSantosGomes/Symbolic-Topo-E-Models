@@ -2,12 +2,12 @@
 \section{Wrapping it up in an exectuable}
 \label{sec:Main}
 
-We will now use the library form Section \ref{sec:Basics} in a program.
+We will now use the library form Section \ref{sec:Preliminaries} in a program.
 
 \begin{code}
 module Main where
 
-import Basics
+import TopoPreliminaries
 
 main :: IO ()
 main = do
