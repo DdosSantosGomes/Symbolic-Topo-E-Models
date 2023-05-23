@@ -1,5 +1,5 @@
 {
-    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.texout",
+    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.texout/%RELATIVE_DIR%",
     "latex-workshop.latex.autoBuild.run": "onSave",
     "cSpell.enableFiletypes": [
         "!haskell"
