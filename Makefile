@@ -1,10 +1,10 @@
 
 .PHONY: all build run test clean
 
-all: report.pdf build
+all: topomodels.pdf build
 
-report.pdf: *.tex lib/*.lhs test/*.lhs exec/*.lhs references.bib
-	latexmk -pdf -synctex=1 -interaction=nonstopmode report
+topomodels.pdf: *.tex lib/*.lhs test/*.lhs exec/*.lhs references.bib
+	latexmk -pdf -synctex=1 -interaction=nonstopmode topomodels
 
 build:
 	stack build

@@ -26,4 +26,4 @@ cabal-dev
 cabal.sandbox.config
 dist
 dist-*
-report.cabal
+topomodels.cabal
