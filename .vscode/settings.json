@@ -1,0 +1,23 @@
+{
+    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.texout",
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "cSpell.enableFiletypes": [
+        "!haskell"
+    ],
+    
+    "[haskell]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "haskell.haskell",
+        "editor.rulers": [
+            80,
+            120
+        ],
+        "editor.tabSize": 4
+    },
+    "cSpell.language": "en-GB",
+    "cSpell.words": [
+        "bisimilar",
+        "bisimulation",
+        "bisimulations",
+    ]
+}
