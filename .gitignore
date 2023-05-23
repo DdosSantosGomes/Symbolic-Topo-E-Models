@@ -1,5 +1,5 @@
-# Created by https://www.toptal.com/developers/gitignore/api/haskell
-# Edit at https://www.toptal.com/developers/gitignore?templates=haskell
+# Created by https://www.toptal.com/developers/gitignore/api/haskell,latex
+# Edit at https://www.toptal.com/developers/gitignore?templates=haskell,latex
 
 ### Haskell ###
 dist
@@ -26,16 +26,8 @@ cabal.project.local~
 .HTF/
 .ghc.environment.*
 
-# End of https://www.toptal.com/developers/gitignore/api/haskell
-
-# -----------------------------------------------------------------------------
-
-# Created by https://www.toptal.com/developers/gitignore/api/latex
-# Edit at https://www.toptal.com/developers/gitignore?templates=latex
-
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
-*.aux
 *.lof
 *.log
 *.lot
@@ -343,8 +335,8 @@ TSWLatexianTemp*
 # glossaries
 *.glstex
 
-# End of https://www.toptal.com/developers/gitignore/api/latex
+# End of https://www.toptal.com/developers/gitignore/api/haskell,latex
 
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 *.cabal
