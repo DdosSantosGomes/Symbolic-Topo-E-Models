@@ -44,6 +44,40 @@ closeUnderIntersection xs = do
  else closeUnderIntersection oneUp
 \end{code}
 
+Now, we can define a Topological space in Haskell.
+
+\begin{code}
+data  TopSpace a = TopSpace { 
+  space :: [a]
+, top :: [[a]]
+}
+\end{code}
+
+The elements of $\tau$ are called \textit{open sets} or \textit{opens}.
+A set $C \subseteq X$ is called a \textit{closed set} if it is the complement
+of an open set, i.e., it is of the form $X \setminus U$ for some $U \in \tau$.
+
+We let $\overline{\tau} = \{X \setminus U | U \in \tau \}$ denote the family of all
+closed sets of $(X, \tau)$.
+
+A set $A \subseteq X$ is called \textit{clopen} if it is both closed and open.
+
+\begin{code}
+opens :: TopSpace a -> [[a]]
+opens = top
+
+closeds :: (Eq a) => TopSpace a -> [[a]]
+closeds ts = [space ts \\ open | open <- top ts]
+
+isOpen :: (Eq a) => [a] -> TopSpace a -> Bool
+isOpen x ts = x `elem` opens ts
+
+isClosed :: (Eq a) => [a] -> TopSpace a -> Bool
+isClosed x ts = x `elem` closeds ts
+
+isClopen :: (Eq a) => [a] -> TopSpace a -> Bool
+isClopen x ts = isOpen x ts && isClosed x ts
+\end{code}
 
 
 
