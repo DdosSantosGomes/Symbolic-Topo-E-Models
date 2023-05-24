@@ -1,8 +1,10 @@
 name: topomodels
 version: 0.1.0.0
-synopsis: My Haskell project
-description: See topomodels.pdf
-maintainer: My Name <my.email@example.com>
+synopsis: TODO
+description: TODO
+maintainer:
+  - David Alvarez Lombardi <dqalombardi@proton.me>
+  - Paulius Skaisgiris <paulius.skaisgiris@gmail.com>
 category: Logic
 
 ghc-options: -Wall
@@ -23,8 +25,8 @@ executables:
       - topomodels
 
 tests:
-  simpletests:
-    main: simpletests.lhs
+  texts:
+    main: texts.lhs
     source-dirs: test
     dependencies:
       - topomodels
