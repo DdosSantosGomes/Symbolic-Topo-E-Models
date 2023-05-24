@@ -21,6 +21,11 @@ module Topology where
 
 import Data.List
 
+-- TODO: workaround nub somehow?
+-- Notion of set equality on lists
+eq :: Ord a => [a] -> [a] -> Bool
+eq x y = sort (nub x) == sort (nub y)
+
 unionize :: (Eq a, Ord a) => [[a]] -> [[a]]
 unionize [] = []
 unionize xs = sort . nub $ [sort (x `union` y) | x <- xs, y <- xs, x /= y]
@@ -29,6 +34,8 @@ intersectionize :: (Eq a, Ord a) => [[a]] -> [[a]]
 intersectionize [] = []
 intersectionize xs = sort . nub $ [sort (x `intersect` y) | x <- xs, y <- xs, x /= y]
 
+-- The closure definitions defined below are finite, but it is sufficient for our purposes
+-- since we will only work with finite models.
 closeUnderUnion :: (Eq a, Ord a) => [[a]] -> [[a]]
 closeUnderUnion [] = []
 closeUnderUnion xs = do
@@ -44,13 +51,27 @@ closeUnderIntersection xs = do
  else closeUnderIntersection oneUp
 \end{code}
 
+Some examples of applying the closure functions:
+
+\begin{showCode}
+ghci> closeUnderUnion [[1], [2], [3, 4]]
+ghci> [[1],[2],[3,4],[1,2],[1,3,4],[2,3,4],[1,2,3,4]]
+
+ghci> closeUnderIntersection [[1,2,3], [2,3], [3,4]]
+ghci> [[1,2,3],[2,3],[3,4],[3]]
+
+ghci> let t = closeUnderIntersection . closeUnderUnion \$ [[1, 2], [1,3], [3, 4]]
+ghci> t
+ghci> [[1,2],[1,3],[3,4],[1,2,3],[1,2,3,4],[1,3,4],[],[1],[3]]
+\end{showCode}
+
 Now, we can define a Topological space in Haskell.
 
 \begin{code}
-data  TopSpace a = TopSpace { 
+data  TopoSpace a = TopoSpace { 
   space :: [a]
 , top :: [[a]]
-}
+} deriving (Show)
 \end{code}
 
 The elements of $\tau$ are called \textit{open sets} or \textit{opens}.
@@ -63,21 +84,39 @@ closed sets of $(X, \tau)$.
 A set $A \subseteq X$ is called \textit{clopen} if it is both closed and open.
 
 \begin{code}
-opens :: TopSpace a -> [[a]]
+opens :: TopoSpace a -> [[a]]
 opens = top
 
-closeds :: (Eq a) => TopSpace a -> [[a]]
+closeds :: (Eq a) => TopoSpace a -> [[a]]
 closeds ts = [space ts \\ open | open <- top ts]
 
-isOpen :: (Eq a) => [a] -> TopSpace a -> Bool
+isOpen :: (Eq a) => [a] -> TopoSpace a -> Bool
 isOpen x ts = x `elem` opens ts
 
-isClosed :: (Eq a) => [a] -> TopSpace a -> Bool
+isClosed :: (Eq a) => [a] -> TopoSpace a -> Bool
 isClosed x ts = x `elem` closeds ts
 
-isClopen :: (Eq a) => [a] -> TopSpace a -> Bool
+isClopen :: (Eq a) => [a] -> TopoSpace a -> Bool
 isClopen x ts = isOpen x ts && isClosed x ts
 \end{code}
+
+Examples of using the above:
+
+\begin{showCode}
+ghci> let ts = TopoSpace {space = [1,2,3,4], top = t}
+ghci> opens ts
+ghci> [[1,2],[1,3],[3,4],[1,2,3],[1,2,3,4],[1,3,4],[],[1],[3]]
+ghci> closeds ts
+ghci> [[3,4],[2,4],[1,2],[4],[],[2],[1,2,3,4],[2,3,4],[1,2,4]]
+ghci> isOpen [1] ts
+ghci> True
+ghci> isClosed [1] ts
+ghci> False
+ghci> isClopen [] ts
+ghci> True
+\end{showCode}
+
+% TODO: write tests for the topology axioms
 
 % TODO: subbasis and basis?
 
@@ -96,15 +135,39 @@ powerset (x:xs) = [x:ps | ps <- powerset xs] ++ powerset xs
 isSubsetEq :: (Eq a) => [a] -> [a] -> Bool
 isSubsetEq xs ys = (xs `intersect` ys) == xs
 
-interior :: (Eq a) => [a] -> TopSpace a -> [a]
-interior xs ts = concat [ u | u <- top ts, isSubsetEq u xs]
+interior :: (Eq a, Ord a) => [a] -> TopoSpace a -> [a]
+interior xs ts = sort . nub . concat $ [ u | u <- top ts, isSubsetEq u xs]
 
-closure :: (Eq a) => [a] -> TopSpace a -> [a]
-closure xs ts = concat [ u | u <- closeds ts, isSubsetEq xs u]
+arbIntersect :: (Eq a) => [[a]] -> [a]
+arbIntersect xs = foldr intersect (concat xs) xs
 
+closure :: (Eq a, Ord a) => [a] -> TopoSpace a -> [a]
+closure xs ts = sort . nub . arbIntersect $ [ u | u <- closeds ts, isSubsetEq xs u]
 \end{code}
 
+Examples of using the above:
 
+\begin{showCode}
+ghci> powerset [1,2,3]
+ghci> [[1,2,3],[1,2],[1,3],[1],[2,3],[2],[3],[]]
+
+ghci> isSubsetEq [] [1,2,3]
+ghci> True
+
+ghci> isSubsetEq [1,2] [1,2,3]
+ghci> True
+
+ghci> isSubsetEq [1,4] [1,2,3]
+ghci> False
+
+ghci> interior [1,2] ts
+ghci> [1,2]
+
+ghci> closure [1,2] ts
+ghci> [1,2]
+\end{showCode}
+
+% TODO: write tests for Kuratowski axioms
 
 
 
