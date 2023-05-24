@@ -30,4 +30,13 @@ satisfies pointedModel (Box phi) = not (null openNeighbourhoodsContainedInTruthS
         truthSet = [x | x <- space, PointedTopoModel topoModel x `satisfies` phi]
         openNeighbourhoodsContainedInTruthSet = [openSet | openSet<-topology, point `elem` openSet, openSet `isSubsetEq` truthSet]
 
+(|=) :: Eq a => PointedTopoModel a -> Form -> Bool
+pointedModel |= phi = pointedModel `satisfies` phi
+
+(||=) :: Eq a => TopoModel a -> Form -> Bool
+topoModel ||= phi = all (\x -> PointedTopoModel topoModel x |= phi) space
+    where
+        (TopoModel topoSpace _) = topoModel
+        TopoSpace space _ = topoSpace
+
 \end{code}
