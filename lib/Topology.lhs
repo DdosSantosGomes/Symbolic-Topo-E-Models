@@ -168,12 +168,3 @@ ghci> [1,2]
 \end{showCode}
 
 % TODO: write tests for Kuratowski axioms
-
-
-
-
-
-
-
-
-
