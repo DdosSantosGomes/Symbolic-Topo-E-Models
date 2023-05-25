@@ -19,36 +19,29 @@ Thus, let us first define closure under intersection and closure under unions.
 \begin{code}
 module Topology where
 
-import Data.List
+import Data.Set (Set, cartesianProduct, union, intersection, (\\), elemAt, isSubsetOf)
+import qualified Data.Set as Set
 
--- TODO: workaround nub somehow?
--- Notion of set equality on lists
-eq :: Ord a => [a] -> [a] -> Bool
-eq x y = sort (nub x) == sort (nub y)
+unionize :: Ord a => Set (Set a) -> Set (Set a)
+unionize sets = Set.map (uncurry union) (cartesianProduct sets sets)
 
-unionize :: (Eq a, Ord a) => [[a]] -> [[a]]
-unionize [] = []
-unionize xs = sort . nub $ [sort (x `union` y) | x <- xs, y <- xs, x /= y]
-
-intersectionize :: (Eq a, Ord a) => [[a]] -> [[a]]
-intersectionize [] = []
-intersectionize xs = sort . nub $ [sort (x `intersect` y) | x <- xs, y <- xs, x /= y]
+intersectionize :: Ord a => Set (Set a) -> Set (Set a)
+intersectionize sets = Set.map (uncurry intersection) (cartesianProduct sets sets)
 
 -- The closure definitions defined below are finite, but it is sufficient for our purposes
 -- since we will only work with finite models.
-closeUnderUnion :: (Eq a, Ord a) => [[a]] -> [[a]]
-closeUnderUnion [] = []
-closeUnderUnion xs = do
- let oneUp = nub (xs ++ unionize xs)
- if xs == oneUp  then xs
- else closeUnderUnion oneUp
+closeUnderUnion :: Ord a => Set (Set a) -> Set (Set a)
+closeUnderUnion sets = do
+    let oneUp = unionize sets
+    if sets == oneUp then sets
+    else closeUnderUnion oneUp
 
-closeUnderIntersection :: (Eq a, Ord a) => [[a]] -> [[a]]
-closeUnderIntersection [] = []
-closeUnderIntersection xs = do
- let oneUp = nub (xs ++ intersectionize xs)
- if xs == oneUp  then xs
- else closeUnderIntersection oneUp
+closeUnderIntersection :: Ord a => Set (Set a) -> Set (Set a)
+closeUnderIntersection sets = do
+    let oneUp = intersectionize sets
+    if sets == oneUp then sets
+    else closeUnderUnion oneUp
+
 \end{code}
 
 Some examples of applying the closure functions:
@@ -68,10 +61,8 @@ ghci> [[1,2],[1,3],[3,4],[1,2,3],[1,2,3,4],[1,3,4],[],[1],[3]]
 Now, we can define a Topological space in Haskell.
 
 \begin{code}
-data  TopoSpace a = TopoSpace { 
-  space :: [a]
-, top :: [[a]]
-} deriving (Show)
+data  TopoSpace a = TopoSpace (Set a) (Set (Set a))
+    deriving (Eq, Show)
 \end{code}
 
 The elements of $\tau$ are called \textit{open sets} or \textit{opens}.
@@ -84,20 +75,19 @@ closed sets of $(X, \tau)$.
 A set $A \subseteq X$ is called \textit{clopen} if it is both closed and open.
 
 \begin{code}
-opens :: TopoSpace a -> [[a]]
-opens = top
 
-closeds :: (Eq a) => TopoSpace a -> [[a]]
-closeds ts = [space ts \\ open | open <- top ts]
+closeds :: Ord a => TopoSpace a -> Set (Set a)
+closeds (TopoSpace space topology) = Set.map (space \\ ) topology
 
-isOpen :: (Eq a) => [a] -> TopoSpace a -> Bool
-isOpen x ts = x `elem` opens ts
+isOpenIn :: Eq a => Set a -> TopoSpace a -> Bool
+isOpenIn set (TopoSpace _ opens) = set `elem` opens
 
-isClosed :: (Eq a) => [a] -> TopoSpace a -> Bool
-isClosed x ts = x `elem` closeds ts
+isClosedIn :: (Eq a , Ord a) => Set a -> TopoSpace a -> Bool
+isClosedIn x ts = x `elem` closeds ts
 
-isClopen :: (Eq a) => [a] -> TopoSpace a -> Bool
-isClopen x ts = isOpen x ts && isClosed x ts
+isClopenIn :: (Eq a , Ord a) => Set a -> TopoSpace a -> Bool
+isClopenIn x ts =  x `isOpenIn` ts && x `isClosedIn` ts
+
 \end{code}
 
 Examples of using the above:
@@ -127,22 +117,29 @@ The \textit{closure} of a subset $S$ of a topological space $X$
 is the intersection of all closed subsets containing $S$. 
 
 \begin{code}
-powerset :: [a] -> [[a]]
-powerset [] = [[]]
-powerset (x:xs) = [x:ps | ps <- powerset xs] ++ powerset xs
 
--- Equivalent property taken from https://en.wikipedia.org/wiki/Subset#Properties
-isSubsetEq :: (Eq a) => [a] -> [a] -> Bool
-isSubsetEq xs ys = (xs `intersect` ys) == xs
+arbUnion :: Ord a => Set (Set a) -> Set a
+arbUnion = Set.foldr union Set.empty 
 
-interior :: (Eq a, Ord a) => [a] -> TopoSpace a -> [a]
-interior xs ts = sort . nub . concat $ [ u | u <- top ts, isSubsetEq u xs]
+arbIntersection :: (Eq a, Ord a) => Set (Set a) -> Set a
+arbIntersection sets | sets == Set.empty = error "Cannot take the intersection of the empty set."
+                     | length sets == 1  = firstSet
+                     | otherwise         = firstSet `intersection` arbIntersection restOfSets
+                where
+                    firstSet = elemAt 0 sets
+                    restOfSets = Set.drop 1 sets
 
-arbIntersect :: (Eq a) => [[a]] -> [a]
-arbIntersect xs = foldr intersect (concat xs) xs
+interior :: Ord a => Set a -> TopoSpace a -> Set a
+interior set topoSpace = arbUnion opensBelowSet
+    where
+        TopoSpace _ opens = topoSpace
+        opensBelowSet = Set.filter (`isSubsetOf` set) opens
 
-closure :: (Eq a, Ord a) => [a] -> TopoSpace a -> [a]
-closure xs ts = sort . nub . arbIntersect $ [ u | u <- closeds ts, isSubsetEq xs u]
+closure :: Ord a => Set a -> TopoSpace a -> Set a
+closure set topoSpace = arbIntersection closedsAboveSet
+    where
+        closedsAboveSet = Set.filter (\c -> set `isSubsetOf` c) (closeds topoSpace)
+
 \end{code}
 
 Examples of using the above:

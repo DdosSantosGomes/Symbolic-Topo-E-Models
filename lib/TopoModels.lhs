@@ -8,9 +8,10 @@ import Syntax (Form)
 import Topology (TopoSpace)
 
 
-type Valuation a = Form -> [a]
+type Valuation a = [(Form, [a])]
 
 data TopoModel a = TopoModel (TopoSpace a) (Valuation a)
+    deriving (Eq, Show)
 
 data PointedTopoModel a = PointedTopoModel (TopoModel a) a
 
