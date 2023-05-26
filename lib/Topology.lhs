@@ -5,9 +5,7 @@ This section describes some topological preliminaries which will be necessary
 for defining Topo Models later on. The definitions are taken from the course slides of
 Topology, Logic, Learning given by Alexandru Baltag in Spring 2023. 
 
-\textit{Note: In our Haskell implementation we  will use lists instead of sets as they seem easier to work with.}
-
-A \textit{topological space} is a pair $(X, \tau)$ where $X$ is a nonempty set 
+A \emph{topological space} is a pair $(X, \tau)$ where $X$ is a nonempty set 
 and $\tau \subseteq \mathcal{P}(X)$ is a family of subsets of $X$ such that
 1. $\emptyset \in \tau$ and $X \in \tau$
 2. $\tau$ is closed under finite intersection: if $U, V \in \tau$ then $U \cap V \in \tau$
@@ -20,8 +18,10 @@ Thus, let us first define closure under intersection and closure under unions.
 
 module Topology where
 
-import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, (\\))
+import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton)
 import Data.Set qualified as S
+
+import Test.QuickCheck
 
 unionize :: (Ord a) => Set (Set a) -> Set (Set a)
 unionize sets = S.map (uncurry union) (cartesianProduct sets sets)
@@ -88,6 +88,44 @@ data TopoSpace a = TopoSpace (Set a) (Set (Set a))
     deriving (Eq, Show)
 \end{code}
 
+Now, let us implement an instance for \texttt{Arbitrary} for it.
+
+\begin{code}
+setOf1 :: (Arbitrary a, Ord a) => Gen a -> Gen (Set a)
+setOf1 = fmap S.fromList . listOf1
+
+setElements :: Set a -> Gen a
+setElements = elements . S.toList
+
+instance (Arbitrary a, Ord a) => Arbitrary (TopoSpace a) where
+  arbitrary = do
+    (x::Set a) <- arbitrary
+    subbasis <- setOf1 $ setOf1 (setElements x)
+    let someTopoSpace = TopoSpace x subbasis
+    return (fixTopoSpace someTopoSpace)
+\end{code}
+
+Let's implement some convenience functions. The first one simply checks if the input \texttt{TopoSpace} 
+object respects all the topology axioms. The second one will fixed any given (potentially broken) \texttt{TopoSpace}
+to have the necessary axioms.
+
+\begin{code}
+isTopoSpace :: (Ord a) => TopoSpace a -> Bool
+isTopoSpace (TopoSpace sp topo) | S.empty `notElem` topo = False
+                                | sp `notElem` topo = False
+                                | not (unions topo `isSubsetOf` sp) = False
+                                | otherwise = topo == (closeUnderUnion . closeUnderIntersection $ topo)
+
+fixTopoSpace :: (Ord a) => TopoSpace a -> TopoSpace a
+fixTopoSpace (TopoSpace sp topo) 
+  | S.empty `notElem` topo = fixTopoSpace (TopoSpace sp (topo `union` S.singleton S.empty))
+  | sp `notElem` topo = fixTopoSpace (TopoSpace sp (topo `union` singleton sp))
+  -- Throw an error since we don't know how the topology should look like
+  | not (unions topo `isSubsetOf` sp) = error "topology not a subset of the powerset of the space"
+  | otherwise = let verifTopo = closeUnderUnion . closeUnderIntersection $ topo
+                in TopoSpace sp verifTopo
+\end{code}
+
 The elements of $\tau$ are called \textit{open sets} or \textit{opens}.
 A set $C \subseteq X$ is called a \textit{closed set} if it is the complement
 of an open set, i.e., it is of the form $X \setminus U$ for some $U \in \tau$.
@@ -137,10 +175,6 @@ True
 
 \end{showCode}
 
-% TODO: write tests for the topology axioms
-
-% TODO: subbasis and basis?
-
 The \textit{interior} of a subset $S$ of a topological space $X$
 is the union of all open subsets of $S$.
 
@@ -185,5 +219,3 @@ ghci> closure (Set.fromList [1]) topoSpace
 fromList [1,2]
 
 \end{showCode}
-
-% TODO: write tests for Kuratowski axioms
