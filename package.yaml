@@ -26,8 +26,8 @@ executables:
       - topomodels
 
 tests:
-  texts:
-    main: texts.lhs
+  tests:
+    main: tests.lhs
     source-dirs: test
     dependencies:
       - topomodels
