@@ -2,6 +2,7 @@
 
 \begin{code}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module TopoModels where
 
@@ -33,7 +34,6 @@ randomVal points (prop:props)
       return $ S.singleton (P prop, randSubset) `S.union` x
 
 instance (Arbitrary a, Ord a, Ord Form) => Arbitrary (TopoModel a) where
-  arbitrary :: (Arbitrary a, Ord a) => Gen (TopoModel a)
   arbitrary = do
     (TopoSpace space topo) <- arbitrary
     -- Random Valuation depending on the points of the space
@@ -42,7 +42,6 @@ instance (Arbitrary a, Ord a, Ord Form) => Arbitrary (TopoModel a) where
     return (TopoModel (TopoSpace space topo) val)
 
 instance (Arbitrary a, Ord a, Ord Form) => Arbitrary (PointedTopoModel a) where
-  arbitrary :: (Arbitrary a, Ord a) => Gen (PointedTopoModel a)
   arbitrary = do 
    (TopoModel (TopoSpace space topo) val) <- arbitrary
    (x :: a) <- setElements space
