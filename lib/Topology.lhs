@@ -1,5 +1,17 @@
-
 \section{Topological Preliminaries}\label{sec:Preliminaries}
+
+\begin{code}
+{-# LANGUAGE ScopedTypeVariables #-}
+
+module Topology where
+
+import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton)
+import qualified Data.Set as S
+
+import Test.QuickCheck
+    ( Arbitrary(arbitrary), Gen, listOf1, elements, oneof, sublistOf )
+
+\end{code}
 
 This section describes some topological preliminaries which will be necessary
 for defining Topo Models later on. The definitions are taken from the course slides of
@@ -15,14 +27,6 @@ and $\tau \subseteq \mathcal{P}(X)$ is a family of subsets of $X$ such that
 Thus, let us first define closure under intersection and closure under unions.
 
 \begin{code}
-
-module Topology where
-
-import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton)
-import Data.Set qualified as S
-
-import Test.QuickCheck
-
 unionize :: (Ord a) => Set (Set a) -> Set (Set a)
 unionize sets = S.map (uncurry union) (cartesianProduct sets sets)
 
@@ -88,9 +92,18 @@ data TopoSpace a = TopoSpace (Set a) (Set (Set a))
     deriving (Eq, Show)
 \end{code}
 
-Now, let us implement an instance for \texttt{Arbitrary} for it.
+Now, let us implement an instance for \texttt{Arbitrary} for it using some set equivalents for arbitrary list functions.
 
 \begin{code}
+
+-- Inspired by https://stackoverflow.com/a/35529208
+
+setOneOf :: Set (Gen a) -> Gen a
+setOneOf = oneof . S.toList
+
+subsetOf :: (Arbitrary a, Ord a) =>  Set a -> Gen (Set a)
+subsetOf =  fmap S.fromList . sublistOf .  S.toList
+
 setOf1 :: (Arbitrary a, Ord a) => Gen a -> Gen (Set a)
 setOf1 = fmap S.fromList . listOf1
 
