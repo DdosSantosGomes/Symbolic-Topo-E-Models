@@ -126,6 +126,31 @@ instance (Arbitrary a, Ord a) => Arbitrary (TopoSpace a) where
     return (fixTopoSpace someTopoSpace)
 \end{code}
 
+Artificial new types to give a subset of the space and a topology only used for tests. 
+This allows efficient generation of subsets, instead of random guessing of subsets as a constraint which
+may take a really long time when testing and may make `QuickCheck` give up.
+
+\begin{code}
+data SubsetTopoSpace a = STS (Set a) (TopoSpace a)
+    deriving (Eq, Show)
+
+instance (Arbitrary a, Ord a) => Arbitrary (SubsetTopoSpace a) where
+  arbitrary = do
+    ((TopoSpace space topo)::TopoSpace a) <- arbitrary
+    subset <- subsetOf space
+    return (STS subset (TopoSpace space topo))
+
+data SSubsetTopoSpace a = SSTS (Set a) (Set a) (TopoSpace a)
+    deriving (Eq, Show)
+
+instance (Arbitrary a, Ord a) => Arbitrary (SSubsetTopoSpace a) where
+  arbitrary = do
+    ((TopoSpace space topo)::TopoSpace a) <- arbitrary
+    subset <- subsetOf space
+    anothersubset <- subsetOf space
+    return (SSTS subset anothersubset (TopoSpace space topo))
+\end{code}
+
 Let's implement some convenience functions. The first one simply checks if the input \texttt{TopoSpace} 
 object respects all the topology axioms. The second one will fixed any given (potentially broken) \texttt{TopoSpace}
 to have the necessary axioms.
