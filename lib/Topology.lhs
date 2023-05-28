@@ -5,11 +5,11 @@
 
 module Topology where
 
-import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton)
+import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton, size)
 import qualified Data.Set as S
 
 import Test.QuickCheck
-    ( Arbitrary(arbitrary), Gen, listOf1, elements, oneof, sublistOf )
+    ( Arbitrary(arbitrary), Gen, listOf1, elements, oneof, sublistOf, suchThat )
 
 \end{code}
 
@@ -110,10 +110,18 @@ setOf1 = fmap S.fromList . listOf1
 setElements :: Set a -> Gen a
 setElements = elements . S.toList
 
+isOfSizeAtMost :: Set a -> Int -> Bool
+isOfSizeAtMost set s = S.size set <= s
+
 instance (Arbitrary a, Ord a) => Arbitrary (TopoSpace a) where
   arbitrary = do
-    (x::Set a) <- arbitrary
-    subbasis <- setOf1 $ setOf1 (setElements x)
+    (x'::Set a) <- arbitrary `suchThat` (`isOfSizeAtMost` 10)
+    (randElem:: a) <- arbitrary
+    -- Make sure x is not empty, otherwise we get an error because of `setElements`
+    let x = x' `S.union` S.singleton randElem
+    -- Put an artificial bound on the size of the set, otherwise it takes too long to "fix" the topology
+    subbasis <- let basis = setOf1 (setElements x) `suchThat` (`isOfSizeAtMost` 3)
+                  in setOf1 basis `suchThat` (`isOfSizeAtMost` 3)
     let someTopoSpace = TopoSpace x subbasis
     return (fixTopoSpace someTopoSpace)
 \end{code}
