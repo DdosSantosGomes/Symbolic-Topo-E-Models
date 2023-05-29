@@ -19,12 +19,13 @@ data TopoModel a = TopoModel (TopoSpace a) (Valuation a)
     deriving (Eq, Show)
 
 data PointedTopoModel a = PointedTopoModel (TopoModel a) a
+    deriving (Eq, Show)
 \end{code}
 
 \begin{code}
 -- Recursively make a valuation function. Go through each propositional variable 
 -- and assign a subset of points at which it is true
-randomVal :: (Arbitrary a, Ord a, Ord Form) => Set a -> [Int] -> Gen (Set (Form, Set a))
+randomVal :: (Arbitrary a, Ord a) => Set a -> [Int] -> Gen (Set (Form, Set a))
 randomVal _ [] = return S.empty
 randomVal points (prop:props) 
   | null points = return S.empty
@@ -33,7 +34,7 @@ randomVal points (prop:props)
       randSubset <- subsetOf points
       return $ S.singleton (P prop, randSubset) `S.union` x
 
-instance (Arbitrary a, Ord a, Ord Form) => Arbitrary (TopoModel a) where
+instance (Arbitrary a, Ord a) => Arbitrary (TopoModel a) where
   arbitrary = do
     (TopoSpace space topo) <- arbitrary
     -- Random Valuation depending on the points of the space
@@ -41,7 +42,7 @@ instance (Arbitrary a, Ord a, Ord Form) => Arbitrary (TopoModel a) where
     val <- randomVal space [1..10]
     return (TopoModel (TopoSpace space topo) val)
 
-instance (Arbitrary a, Ord a, Ord Form) => Arbitrary (PointedTopoModel a) where
+instance (Arbitrary a, Ord a) => Arbitrary (PointedTopoModel a) where
   arbitrary = do 
    (TopoModel (TopoSpace space topo) val) <- arbitrary
    (x :: a) <- setElements space

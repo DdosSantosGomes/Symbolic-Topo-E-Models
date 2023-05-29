@@ -163,6 +163,9 @@ ghci> True
 
 ghci> isTopoSpace (fixTopoSpace goodTS)
 ghci> True
+
+ghci> fixTopoSpace (TopoSpace (S.fromList [1,2,3,4,5]) topology)
+ghci> error "topology not a subset of the powerset of the space"
 \end{showCode}
 
 The elements of $\tau$ are called \textit{open sets} or \textit{opens}.

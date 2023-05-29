@@ -18,7 +18,7 @@ data Form
     | Neg Form
     | Dia Form
     | Box Form
-    deriving (Eq, Show)
+    deriving (Eq, Show, Ord)
 
 \end{code}
 
