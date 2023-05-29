@@ -27,7 +27,7 @@ instance Arbitrary Form where
   arbitrary = sized randomForm
    where
     randomForm :: Int -> Gen Form
-    randomForm 0 = P <$> elements [1 .. 5]
+    randomForm 0 = P <$> elements [1 .. 5] -- Fixed vocabulary
     randomForm n =
       oneof
         [
