@@ -5,7 +5,7 @@
 
 module Topology where
 
-import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton, size)
+import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton)
 import qualified Data.Set as S
 
 import Test.QuickCheck
@@ -55,44 +55,45 @@ closeUnderIntersection sets = do
 Some examples of applying the closure functions:
 
 \begin{showCode}
-ghci> (s0 :: Set Int) = Set.fromList [1] 
-ghci> (s1 :: Set Int) = Set.fromList [2] 
-ghci> (s2 :: Set Int) = Set.fromList [3, 4] 
-ghci> (s3 :: Set Int) = Set.fromList [1, 2, 3] 
-ghci> (s4 :: Set Int) = Set.fromList [2, 3]
-ghci> (s5 :: Set Int) = Set.fromList [3, 4]
-ghci> (s6 :: Set Int) = Set.fromList [1, 2]
-ghci> (s7 :: Set Int) = Set.fromList [1, 3]
+ghci> (s0 :: Set Int) = S.fromList [1] 
+ghci> (s1 :: Set Int) = S.fromList [2] 
+ghci> (s2 :: Set Int) = S.fromList [3, 4] 
+ghci> (s3 :: Set Int) = S.fromList [1, 2, 3] 
+ghci> (s4 :: Set Int) = S.fromList [2, 3]
+ghci> (s5 :: Set Int) = S.fromList [3, 4]
+ghci> (s6 :: Set Int) = S.fromList [1, 2]
+ghci> (s7 :: Set Int) = S.fromList [1, 3]
 \end{showCode}
 
 \begin{showCode}
 
-ghci> closeUnderUnion \$ Set.fromList [s0, s1, s2]
+ghci> closeUnderUnion \$ S.fromList [s0, s1, s2]
 fromList [fromList [1],fromList [1,2],fromList [1,2,3,4],fromList [1,3,4],fromList [2],fromList [2,3,4],fromList [3,4]]
 
-ghci> closeUnderIntersection \$ Set.fromList [s0, s1, s2]
+ghci> closeUnderIntersection \$ S.fromList [s0, s1, s2]
 fromList [fromList [],fromList [1],fromList [2],fromList [3,4]]
 
-ghci> closeUnderUnion \$ Set.fromList [s3, s4, s5]
+ghci> closeUnderUnion \$ S.fromList [s3, s4, s5]
 fromList [fromList [1,2,3],fromList [1,2,3,4],fromList [2,3],fromList [2,3,4],fromList [3,4]]
 
-ghci> closeUnderIntersection \$ Set.fromList [s3, s4, s5]
+ghci> closeUnderIntersection \$ S.fromList [s3, s4, s5]
 fromList [fromList [1,2,3],fromList [2,3],fromList [3],fromList [3,4]]
 
-ghci> topology = (closeUnderUnion . closeUnderIntersection) \$ Set.fromList [s5, s6, s7]
+ghci> topology = (closeUnderUnion . closeUnderIntersection) \$ S.fromList [s5, s6, s7]
 ghci> topology
 fromList [fromList [],fromList [1],fromList [1,2],fromList [1,2,3],fromList [1,2,3,4],fromList [1,3],fromList [1,3,4],fromList [3],fromList [3,4]]
 
 \end{showCode}
 
-Now, we can define a Topological space in Haskell.
+We can define a Topological space in Haskell.
 
 \begin{code}
 data TopoSpace a = TopoSpace (Set a) (Set (Set a))
     deriving (Eq, Show)
 \end{code}
 
-Now, let us implement an instance for \texttt{Arbitrary} for it using some set equivalents for arbitrary list functions.
+Now, let us implement an instance for \texttt{Arbitrary} for it. To do so, we will reimplement
+some functions from `QuickCheck` for Sets.
 
 \begin{code}
 
@@ -126,31 +127,6 @@ instance (Arbitrary a, Ord a) => Arbitrary (TopoSpace a) where
     return (fixTopoSpace someTopoSpace)
 \end{code}
 
-Artificial new types to give a subset of the space and a topology only used for tests. 
-This allows efficient generation of subsets, instead of random guessing of subsets as a constraint which
-may take a really long time when testing and may make `QuickCheck` give up.
-
-\begin{code}
-data SubsetTopoSpace a = STS (Set a) (TopoSpace a)
-    deriving (Eq, Show)
-
-instance (Arbitrary a, Ord a) => Arbitrary (SubsetTopoSpace a) where
-  arbitrary = do
-    ((TopoSpace space topo)::TopoSpace a) <- arbitrary
-    subset <- subsetOf space
-    return (STS subset (TopoSpace space topo))
-
-data SSubsetTopoSpace a = SSTS (Set a) (Set a) (TopoSpace a)
-    deriving (Eq, Show)
-
-instance (Arbitrary a, Ord a) => Arbitrary (SSubsetTopoSpace a) where
-  arbitrary = do
-    ((TopoSpace space topo)::TopoSpace a) <- arbitrary
-    subset <- subsetOf space
-    anothersubset <- subsetOf space
-    return (SSTS subset anothersubset (TopoSpace space topo))
-\end{code}
-
 Let's implement some convenience functions. The first one simply checks if the input \texttt{TopoSpace} 
 object respects all the topology axioms. The second one will fixed any given (potentially broken) \texttt{TopoSpace}
 to have the necessary axioms.
@@ -171,6 +147,23 @@ fixTopoSpace (TopoSpace sp topo)
   | otherwise = let verifTopo = closeUnderUnion . closeUnderIntersection $ topo
                 in TopoSpace sp verifTopo
 \end{code}
+
+Examples of using the above:
+\begin{showCode}
+ghci> isTopoSpace (TopoSpace (arbUnion \$ S.fromList [s5, s6, s7]) topology)
+ghci> True
+
+ghci> badTS = TopoSpace (S.fromList [1,2,3]) (S.fromList [S.fromList [1,2], S.fromList[2,3]])
+ghci> isTopoSpace badTS
+ghci> False
+
+ghci> goodTS = fixTopoSpace badTS
+ghci> isTopoSpace goodTS
+ghci> True
+
+ghci> isTopoSpace (fixTopoSpace goodTS)
+ghci> True
+\end{showCode}
 
 The elements of $\tau$ are called \textit{open sets} or \textit{opens}.
 A set $C \subseteq X$ is called a \textit{closed set} if it is the complement
@@ -204,7 +197,7 @@ Examples of using the above:
 
 \begin{showCode}
 
-ghci> topoSpace = TopoSpace (Set.fromList [1, 2, 3, 4]) topology
+ghci> topoSpace = TopoSpace (S.fromList [1, 2, 3, 4]) topology
 
 ghci> closeds topoSpace
 fromList [fromList [],fromList [1,2],fromList [1,2,3,4],fromList [1,2,4],fromList [2],fromList [2,3,4],fromList [2,4],fromList [3,4],fromList [4]]
@@ -212,11 +205,11 @@ fromList [fromList [],fromList [1,2],fromList [1,2,3,4],fromList [1,2,4],fromLis
 ghci> openNbds 2 topoSpace
 fromList [fromList [1,2],fromList [1,2,3],fromList [1,2,3,4]]
 
-ghci> (Set.fromList [1]) `isOpenIn` topoSpace
+ghci> S.fromList [1] `isOpenIn` topoSpace
 True
-ghci> (Set.fromList [1]) `isClosedIn` topoSpace
+ghci> S.fromList [1] `isClosedIn` topoSpace
 False
-ghci> (Set.fromList []) `isClopenIn` topoSpace
+ghci> S.fromList [] `isClopenIn` topoSpace
 True
 
 \end{showCode}
@@ -258,10 +251,10 @@ Examples of using the above:
 
 \begin{showCode}
 
-ghci> interior (Set.fromList [1]) topoSpace
+ghci> interior (S.fromList [1]) topoSpace
 fromList [1]
 
-ghci> closure (Set.fromList [1]) topoSpace
+ghci> closure (S.fromList [1]) topoSpace
 fromList [1,2]
 
 \end{showCode}
