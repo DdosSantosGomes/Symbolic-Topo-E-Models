@@ -11,7 +11,7 @@ import Semantics
 import TestHelpers
 
 import Test.Hspec
-    ( hspec, describe, it, anyErrorCall, shouldBe, shouldThrow )
+    ( hspec, describe, it, shouldBe, shouldThrow, anyException )
 import Test.Hspec.QuickCheck ( prop)
 import Test.QuickCheck 
 import Control.Exception (evaluate)
@@ -21,33 +21,8 @@ import qualified Data.Set as S
 \end{code}
 
 \begin{code}
-{-
-  prop "property of one thing" $
-    \ x -> (x:: Int) * 2 * 2 === x * 4
-  prop "poperty of two things" $
-    \ x y -> (x :: Int) * y === y * x
-  prop "property of two things with constraints" $
-    \ x y -> even (x :: Int) && odd y ==> even (x * y)
-  prop "property of two things with dependency" $
-    \ x y -> (y :: Int) < x ==> y -10 < x
-  
-  describe "pForm" $ do
-    prop "pForm (P k) should contain k" $
-      \k -> pForm (P k) `shouldContain` show k
-  describe "prove" $ do
-    it "prove the law of excluded middle" $
-      prove (Neg (Con (P 1) (Neg (P 1))))
-    it "do not prove p1 ^ p2" $
-      not $ prove (Con (P 1) (P 2))
-
--- use a different function to run checks and then return 
--- K axiom
--- formulas that are not valid but satisfiable 
--- write tests that are expected to fail
--}
 main :: IO ()
 main = hspec $ do
-{-
   describe "TopoSpace generation" $ do
     prop "Arbitrary TopoSpace satisfies the open set definition of a topo space" $ do
       \ts -> isTopoSpace (ts :: TopoSpace Int)
@@ -77,7 +52,6 @@ main = hspec $ do
         \(SSTS setA setB ts) -> 
           interior ((setA :: Set Int) `S.intersection` setB) ts `shouldBe` 
           interior setA ts `S.intersection` interior setB ts
-          -}
   describe "Examples from the Topology module" $ do
     it "closeUnderUnion $ Set.fromList [s0, s1, s2]" $ do
       let result = S.fromList [S.fromList [1], S.fromList [1,2], S.fromList [1,2,3,4], S.fromList [1,3,4],S.fromList [2],S.fromList [2,3,4],S.fromList [3,4]]
@@ -120,9 +94,29 @@ main = hspec $ do
     it "closure (Set.fromList [1]) topoSpace" $ do
       let result = S.fromList [1,2]
       closure (S.fromList [1]) topoSpace `shouldBe` result
-    it "fixTopoSpace (TopoSpace (S.fromList [1,2,3,4,5]) topology)" $ do
-       evaluate (fixTopoSpace (TopoSpace (S.fromList [1,2,3,4,5]) topology)) `shouldThrow` anyErrorCall
-
+    it "fixTopoSpace (TopoSpace (S.fromList [1,2,3]) topology)" $ do
+       evaluate (fixTopoSpace (TopoSpace (S.fromList [1,2,3]) topology)) `shouldThrow` anyException
+  describe "TopoModel semantics" $ do
+    prop "Validates the K axiom" $ do
+      \ts -> (ts :: TopoModel Int) ||= kAxiom
+    prop "Validates tautology: p or not p" $ do
+      \ts -> (ts :: TopoModel Int) ||= (P 1 `Dis` Neg (P 1))
+    prop "Validates tautology: p implies p" $ do
+      \ts -> (ts :: TopoModel Int) ||= (P 1 `Imp` P 1)
+    prop "Validates tautology: p implies (q implies (p and q))" $ do
+      \ts -> (ts :: TopoModel Int) ||= (P 1 `Imp` (P 2 `Imp` (P 1 `Con` P 2)))
+    prop "Validates modal tautology: Dia p or not Dia p"$ do
+      \ts -> (ts :: TopoModel Int) ||= (Dia (P 1)`Dis` Neg (Dia (P 1)))
+    prop "Validates modal tautology: Box p implies Dia p"$ do
+      \ts -> (ts :: TopoModel Int) ||= (Box (P 1) `Imp` Dia (P 1))
+    prop "Cannot satisfy contradiction p and not p" $ do
+      \ts -> not ((ts :: PointedTopoModel Int) |= (P 1 `Con` Neg (P 1)))
+    prop "Cannot satisfy contradiction ((P or Q) implies R) and not ((P or Q) implies R)" $ do
+      \ts -> not ((ts :: PointedTopoModel Int) |= (((P 1 `Dis` P 2) `Imp` P 3) `Con` Neg ((P 1 `Dis` P 2) `Imp` P 3)))
+    prop "Cannot satisfy modal contradiction: Dia p or not Dia p" $ do
+      \ts -> not ((ts :: PointedTopoModel Int) |= (Dia (P 1) `Con` Neg (Dia (P 1))))
+    prop "Cannot satisfy modal contradiction: Box p and Dia not p" $ do
+      \ts -> not ((ts :: PointedTopoModel Int) |= (Box (P 1) `Con` Dia (Neg (P 1))))
 
 \end{code}
 
