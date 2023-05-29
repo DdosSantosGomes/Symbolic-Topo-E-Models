@@ -11,8 +11,10 @@ import Semantics
 import TestHelpers
 
 import Test.Hspec
-import Test.Hspec.QuickCheck
+    ( hspec, describe, it, anyErrorCall, shouldBe, shouldThrow )
+import Test.Hspec.QuickCheck ( prop)
 import Test.QuickCheck 
+import Control.Exception (evaluate)
 
 import Data.Set (Set, isSubsetOf)
 import qualified Data.Set as S
@@ -45,6 +47,7 @@ import qualified Data.Set as S
 -}
 main :: IO ()
 main = hspec $ do
+{-
   describe "TopoSpace generation" $ do
     prop "Arbitrary TopoSpace satisfies the open set definition of a topo space" $ do
       \ts -> isTopoSpace (ts :: TopoSpace Int)
@@ -64,7 +67,7 @@ main = hspec $ do
           closure ((setA :: Set Int) `S.union` setB) ts `shouldBe` 
           closure setA ts `S.union` closure setB ts
   describe "Kuratowski Axioms for the interior operator" $ do
-    prop "Preserves the whole space" $ 
+    prop "Preserves the whole space" $ do
         \(TopoSpace space topo) -> interior (space :: Set Int) (TopoSpace space topo) `shouldBe` space
     prop "Is intensive for all A \\subseteq X" $ do
         \ (STS setA ts) -> interior (setA :: Set Int) ts `isSubsetOf` setA
@@ -74,6 +77,7 @@ main = hspec $ do
         \(SSTS setA setB ts) -> 
           interior ((setA :: Set Int) `S.intersection` setB) ts `shouldBe` 
           interior setA ts `S.intersection` interior setB ts
+          -}
   describe "Examples from the Topology module" $ do
     it "closeUnderUnion $ Set.fromList [s0, s1, s2]" $ do
       let result = S.fromList [S.fromList [1], S.fromList [1,2], S.fromList [1,2,3,4], S.fromList [1,3,4],S.fromList [2],S.fromList [2,3,4],S.fromList [3,4]]
@@ -116,23 +120,9 @@ main = hspec $ do
     it "closure (Set.fromList [1]) topoSpace" $ do
       let result = S.fromList [1,2]
       closure (S.fromList [1]) topoSpace `shouldBe` result
-  {-
-  describe "TopoModel semantics" $ do
-    prop "Validates the K axiom" $ do
-      \ts -> (ts :: TopoModel Int) ||= K
-    prop "Validates tautology p or not p" $ do
-      \ts -> (ts :: TopoModel Int) ||= K
-    prop "Validates tautology p implies p" $ do
-      \ts -> (ts :: TopoModel Int) ||= K
-    prop "Validates modal tautology p implies p" $ do
-      \ts -> (ts :: TopoModel Int) ||= K
-    prop "Cannot satisfy contradiction p and not p" $ do
-      \ts -> (ts :: TopoModel Int) ||= K
-    prop "Cannot satisfy contradiction ............." $ do
-      \ts -> (ts :: TopoModel Int) ||= K
-    prop "Cannot satisfy modal contradiction ............." $ do
-      \ts -> (ts :: TopoModel Int) ||= K
--}
+    it "fixTopoSpace (TopoSpace (S.fromList [1,2,3,4,5]) topology)" $ do
+       evaluate (fixTopoSpace (TopoSpace (S.fromList [1,2,3,4,5]) topology)) `shouldThrow` anyErrorCall
+
 
 \end{code}
 

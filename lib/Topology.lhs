@@ -140,10 +140,10 @@ isTopoSpace (TopoSpace sp topo) | S.empty `notElem` topo = False
 
 fixTopoSpace :: (Ord a) => TopoSpace a -> TopoSpace a
 fixTopoSpace (TopoSpace sp topo) 
+  -- Throw an error since we don't know how the topology should look like
+  | not (S.unions topo `isSubsetOf` sp) = error "topology not a subset of the powerset of the space"
   | S.empty `notElem` topo = fixTopoSpace (TopoSpace sp (topo `union` S.singleton S.empty))
   | sp `notElem` topo = fixTopoSpace (TopoSpace sp (topo `union` singleton sp))
-  -- Throw an error since we don't know how the topology should look like
-  | not (unions topo `isSubsetOf` sp) = error "topology not a subset of the powerset of the space"
   | otherwise = let verifTopo = closeUnderUnion . closeUnderIntersection $ topo
                 in TopoSpace sp verifTopo
 \end{code}

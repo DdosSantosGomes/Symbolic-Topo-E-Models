@@ -6,6 +6,7 @@
 module TestHelpers where
 
 import Topology
+import Syntax
 import TopoModels
 
 import Test.QuickCheck
@@ -71,4 +72,9 @@ goodTS = fixTopoSpace badTS
 
 topoSpace :: TopoSpace Int
 topoSpace = TopoSpace (S.fromList [1, 2, 3, 4]) topology
+\end{code}
+
+\begin{code}
+kAxiom :: Form
+kAxiom = Box (P 1 `Imp` P 2) `Imp` (Box (P 1) `Imp` Box (P 2))
 \end{code}
