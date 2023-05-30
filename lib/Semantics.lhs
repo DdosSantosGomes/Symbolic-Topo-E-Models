@@ -13,6 +13,7 @@ import KripkeModels (PointedS4KripkeModel (PS4KM), S4KripkeFrame (S4KF), S4Kripk
 import Syntax (Form (..))
 import TopoModels (PointedTopoModel (..), TopoModel (..))
 import Topology (TopoSpace (TopoSpace), openNbds)
+import SetTheory (imageIn)
 
 \end{code}
 
@@ -84,7 +85,7 @@ instance (Eq a, Ord a) => PointSemantics (PointedS4KripkeModel a) where
         (PS4KM kripkeModel world) = pointedModel
         S4KM kripkeFrame _ = kripkeModel
         S4KF _ relation = kripkeFrame
-        imageOfWorld = S.map snd $ S.filter (\(x, _) -> x == world) relation
+        imageOfWorld =  world `imageIn` relation
 
 instance (Eq a, Ord a) => ModelSemantics (S4KripkeModel a) where
     kripkeModel ||= phi = wholeSetSatisfiesForm carrier phi

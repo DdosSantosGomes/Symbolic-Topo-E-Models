@@ -8,11 +8,8 @@ import Data.Set (Set)
 import Data.Set qualified as S
 import Test.QuickCheck (Arbitrary, Gen)
 
-import Syntax (Form(P))
-import Topology (subsetOf) {- FIXME - We shouldn't have to import Topology
-for access to this. It should probably live in some other module that does
-set-theoretic stuff.
--}
+import SetTheory (subsetOf)
+import Syntax (Form (P))
 
 \end{code}
 
