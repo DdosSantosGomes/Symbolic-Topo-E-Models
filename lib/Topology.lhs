@@ -5,11 +5,11 @@
 
 module Topology where
 
-import Data.Set (Set, cartesianProduct, elemAt, intersection, isSubsetOf, union, unions, (\\), singleton)
-import qualified Data.Set as S
+import Data.Set (Set, elemAt, intersection, isSubsetOf, singleton, union, unions, (\\))
+import Data.Set qualified as S
+import Test.QuickCheck (Arbitrary (arbitrary), suchThat)
 
-import Test.QuickCheck
-    ( Arbitrary(arbitrary), Gen, listOf1, elements, oneof, sublistOf, suchThat )
+import SetTheory (closeUnderIntersection, closeUnderUnion, isOfSizeBetween, setElements, setOf1)
 
 \end{code}
 
@@ -25,32 +25,6 @@ and $\tau \subseteq \pset{X}$ is a family of subsets of $X$ such that
    $\bigcup A \in \tau$
 
 Thus, let us first define closure under intersection and closure under unions.
-
-\begin{code}
-unionize :: (Ord a) => Set (Set a) -> Set (Set a)
-unionize sets = S.map (uncurry union) (cartesianProduct sets sets)
-
-intersectionize :: (Ord a) => Set (Set a) -> Set (Set a)
-intersectionize sets = S.map (uncurry intersection) (cartesianProduct sets sets)
-
--- The closure definitions defined below are finite, but it is sufficient for our purposes
--- since we will only work with finite models.
-
-closeUnderUnion :: (Ord a) => Set (Set a) -> Set (Set a)
-closeUnderUnion sets = do
-    let oneUp = unionize sets
-    if sets == oneUp
-        then sets
-        else closeUnderUnion oneUp
-
-closeUnderIntersection :: (Ord a) => Set (Set a) -> Set (Set a)
-closeUnderIntersection sets = do
-    let oneUp = intersectionize sets
-    if sets == oneUp
-        then sets
-        else closeUnderIntersection oneUp
-
-\end{code}
 
 Here we initialise a few sets to test our implementations going forward.
 
@@ -102,34 +76,16 @@ some functions from `QuickCheck` for Sets.
 
 \begin{code}
 
--- Inspired by https://stackoverflow.com/a/35529208
-
-setOneOf :: Set (Gen a) -> Gen a
-setOneOf = oneof . S.toList
-
-subsetOf :: (Arbitrary a, Ord a) =>  Set a -> Gen (Set a)
-subsetOf =  fmap S.fromList . sublistOf .  S.toList
-
-setOf1 :: (Arbitrary a, Ord a) => Gen a -> Gen (Set a)
-setOf1 = fmap S.fromList . listOf1
-
-setElements :: Set a -> Gen a
-setElements = elements . S.toList
-
-isOfSizeAtMost :: Set a -> Int -> Bool
-isOfSizeAtMost set s = S.size set <= s
-
 instance (Arbitrary a, Ord a) => Arbitrary (TopoSpace a) where
-  arbitrary = do
-    (x'::Set a) <- arbitrary `suchThat` (`isOfSizeAtMost` 10)
-    (randElem:: a) <- arbitrary
-    -- Make sure x is not empty, otherwise we get an error because of `setElements`
-    let x = x' `S.union` S.singleton randElem
-    -- Put an artificial bound on the size of the set, otherwise it takes too long to "fix" the topology
-    subbasis <- let basis = setOf1 (setElements x) `suchThat` (`isOfSizeAtMost` 3)
-                  in setOf1 basis `suchThat` (`isOfSizeAtMost` 3)
-    let someTopoSpace = TopoSpace x subbasis
-    return (fixTopoSpace someTopoSpace)
+    arbitrary = do
+        (x :: Set a) <- arbitrary `suchThat` (\set -> isOfSizeBetween set 1 10)
+        -- Put an artificial bound on the size of the set, otherwise it takes too long to "fix" the topology
+        subbasis <-
+            let basis = setOf1 (setElements x) `suchThat` (\set -> isOfSizeBetween set 0 3)
+             in setOf1 basis `suchThat` (\set -> isOfSizeBetween set 0 3)
+        let someTopoSpace = TopoSpace x subbasis
+        return (fixTopoSpace someTopoSpace)
+
 \end{code}
 
 Let's implement some convenience functions. The first one simply checks if the input \texttt{TopoSpace} 

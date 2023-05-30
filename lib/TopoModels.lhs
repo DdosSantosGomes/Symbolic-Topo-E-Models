@@ -10,7 +10,8 @@ module TopoModels where
 import Test.QuickCheck (Arbitrary (arbitrary))
 
 import Models (Valuation, randomVal)
-import Topology (TopoSpace (TopoSpace), setElements)
+import SetTheory (setElements)
+import Topology (TopoSpace (TopoSpace))
 
 data TopoModel a = TopoModel (TopoSpace a) (Valuation a)
     deriving (Eq, Show)
