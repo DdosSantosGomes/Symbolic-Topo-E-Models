@@ -53,3 +53,104 @@
 \pdfinfoomitdate=1
 \pdftrailerid{}
 \pdfsuppressptexinfo15
+
+% Commands and aliases
+
+\def\TODO{\textcolor{red}{\textbf{Finish me.}}}
+\def\FIXME{\textcolor{red}{\textbf{Fix me.}}}
+\def\reff{\textcolor{red}{\textbf{?}}}
+% Fonts
+\def\Bl{\Bigl}
+\def\Br{\Bigr}
+% Sets
+\def\contains{\ni}
+\def\notcontains{\notbin{\ni}}
+\def\empty{\varnothing}
+\def\sub{\subseteq}
+\def\sup{\supseteq}
+\def\notsub{\notbin{\sub}}
+\def\notsup{\notbin{\sup}}
+\def\union{\cup}
+\def\inter{\cap}
+\def\bigunion{\bigcup}
+\def\biginter{\bigcap}
+\def\dunion{\sqcup}
+\newcommand{\pset}[1]{\wp(#1)}
+\newcommand{\set}[1]{\{#1\}}
+\newcommand{\indset}[2]{\set{#1}_{#2}}
+\newcommand{\bindset}[3]{\set{#1}_{#2}^{#3}}
+\newcommand{\comp}[2]{\{ #1 \mid #2 \}}
+\newcommand{\compin}[3]{\{ #1 \in #2 \mid #3 \}}
+\newcommand{\compsub}[3]{\{ #1 \sub #2 \mid #3 \}}
+\newcommand{\quo}[2]{{#1}_{\nicefrac{}{#2}}}
+% Functions
+\def\too{\longrightarrow}
+\def\mapstoo{\longmapsto}
+\def\after{\circ}
+\def\inject{\xhookrightarrow{}}
+% General logic
+\def\imp{\rightarrow}
+\def\bigland{\bigwedge}
+\def\biglor{\bigvee}
+\def\refutes{\notbin{\models}}
+\def\seqimp{\Rightarrow}
+\def\iso{\cong}
+\def\notiso{\notbin{\simeq}}
+\def\substruct{\mathbin{\trianglelefteqslant}}
+\def\notsubstruct{\notbin{\substruct}}
+\def\proves{\vdash}
+\newcommand{\provable}[2]{\proves^{#1}_{#2}}
+% Modal logic
+\def\Dia{\Diamond}
+\def\HalfDiamondLeft{\ensuremath{\clipbox{0pt 0pt 4pt 0pt}{$\Diamond$}}}
+\def\HalfDiamondRight{\ensuremath{\clipbox{4pt 0pt 0pt 0pt}{$\Diamond$}}}
+\def\HalfBoxLeft{\ensuremath{\clipbox{0pt 0pt 4pt 0pt}{$\square$}}}
+\def\HalfBoxRight{\ensuremath{\clipbox{4pt 0pt 0pt 0pt}{$\square$}}}
+\def\Dox{\HalfDiamondLeft\raisebox{-1.4pt}{\scalebox{1.2}{\HalfBoxRight}}}
+\def\Bia{\raisebox{-1.4pt}{\scalebox{1.2}{\HalfBoxLeft}}\HalfDiamondRight}
+\def\mcbox{\mathrlap{\Box}{\hspace{2.3pt}\raisebox{1.8pt}{\scalebox{0.8}{$*$}}}\hspace{2.2pt}}
+\def\mcdia{\mathrlap{\Diamond}{\hspace{1.6pt}\raisebox{1.2pt}{\scalebox{0.8}{$*$}}}\hspace{1.5pt}}
+% Orders
+\def\leq{\leqslant}
+\def\geq{\geqslant}
+\def\notleq{\notbin{\leq}}
+\def\notgeq{\notbin{\geq}}
+\def\notlt{\notbin{<}}
+\def\notgt{\notbin{>}}
+\def\join{\vee}
+\def\meet{\wedge}
+\def\bigjoin{\bigvee}
+\def\bigmeet{\bigwedge}
+\newcommand{\upset}[1]{{\uparrow}#1}
+\newcommand{\downset}[1]{{\downarrow}#1}
+\newcommand{\Upset}[1]{{\Uparrow}#1}
+\newcommand{\Downset}[1]{{\Downarrow}#1}
+% Numbers
+\def\NN{\mathbb{N}}
+\def\QQ{\mathbb{Q}}
+\def\RR{\mathbb{R}}
+% Topology
+\def\interior{\text{int}}
+\newcommand{\closure}[1]{\overline{#1}}
+% Proof-writing
+\def\subsubqed{\hfill $\checkmark$}
+\def\subqed{\hfill $\square$}
+\def\qed{\hfill $\blacksquare$}
+\def\mimp{\Rightarrow}
+\def\miff{\Leftrightarrow}
+\def\defiff{\ :\Longleftrightarrow}
+\def\awtbs{as was to be shown}
+\def\wlogmimp{\xRightarrow{\text{WLOG}}}
+\def\LHS{\text{LHS}}
+\def\RHS{\text{RHS}}
+\def\Nte{\emph{Note - }}
+\newcommand{\Rmk}[1]{\emph{Remark #1 -}}
+\newcommand{\Def}[2]{\textbf{Definition #1} (#2) -}
+\newcommand{\Exm}[1]{\textbf{Example #1} -}
+\newcommand{\Thm}[1]{\textbf{Theorem #1} -}
+\newcommand{\Lem}[1]{\textbf{Lemma #1} -}
+\newcommand{\Fct}[1]{\textbf{Fact #1} -}
+\newcommand{\Obs}[1]{\textbf{Observation #1} -}
+\def\Proof{\emph{Proof - }}
+% Project-specific
+\def\XX{\mathbf{X}}
