@@ -14,14 +14,14 @@ import Test.QuickCheck
 \end{code}
 
 This section describes some topological preliminaries which will be necessary
-for defining Topo Models later on. The definitions are taken from the course slides of
+for defining TopoModels later on. The definitions are taken from the course slides of
 Topology, Logic, Learning given by Alexandru Baltag in Spring 2023. 
 
-A \emph{topological space} is a pair $(X, \tau)$ where $X$ is a nonempty set 
-and $\tau \subseteq \mathcal{P}(X)$ is a family of subsets of $X$ such that
-1. $\emptyset \in \tau$ and $X \in \tau$
-2. $\tau$ is closed under finite intersection: if $U, V \in \tau$ then $U \cap V \in \tau$
-3. $\tau$ is closed under arbitrary unions: for any subset $A \subseteq \tau$, the union
+A \textit{topological space} is a pair $(X, \tau)$ where $X$ is a nonempty set 
+and $\tau \subseteq \pset{X}$ is a family of subsets of $X$ such that
+(1) $\empty \in \tau$ and $X \in \tau$
+(2) $\tau$ is closed under finite intersection: if $U, V \in \tau$ then $U \cap V \in \tau$
+(3) $\tau$ is closed under arbitrary unions: for any subset $A \subseteq \tau$, the union
    $\bigcup A \in \tau$
 
 Thus, let us first define closure under intersection and closure under unions.
@@ -52,7 +52,7 @@ closeUnderIntersection sets = do
 
 \end{code}
 
-Some examples of applying the closure functions:
+Here we initialise a few sets to test our implementations going forward.
 
 \begin{showCode}
 ghci> (s0 :: Set Int) = S.fromList [1] 
@@ -65,27 +65,29 @@ ghci> (s6 :: Set Int) = S.fromList [1, 2]
 ghci> (s7 :: Set Int) = S.fromList [1, 3]
 \end{showCode}
 
+Here we provide some examples of closure under intersections and unions.
+
 \begin{showCode}
 
-ghci> closeUnderUnion \$ S.fromList [s0, s1, s2]
+ghci> closeUnderUnion $ S.fromList [s0, s1, s2]
 fromList [fromList [1],fromList [1,2],fromList [1,2,3,4],fromList [1,3,4],fromList [2],fromList [2,3,4],fromList [3,4]]
 
-ghci> closeUnderIntersection \$ S.fromList [s0, s1, s2]
+ghci> closeUnderIntersection $ S.fromList [s0, s1, s2]
 fromList [fromList [],fromList [1],fromList [2],fromList [3,4]]
 
-ghci> closeUnderUnion \$ S.fromList [s3, s4, s5]
+ghci> closeUnderUnion $ S.fromList [s3, s4, s5]
 fromList [fromList [1,2,3],fromList [1,2,3,4],fromList [2,3],fromList [2,3,4],fromList [3,4]]
 
-ghci> closeUnderIntersection \$ S.fromList [s3, s4, s5]
+ghci> closeUnderIntersection $ S.fromList [s3, s4, s5]
 fromList [fromList [1,2,3],fromList [2,3],fromList [3],fromList [3,4]]
 
-ghci> topology = (closeUnderUnion . closeUnderIntersection) \$ S.fromList [s5, s6, s7]
+ghci> topology = (closeUnderUnion . closeUnderIntersection) $ S.fromList [s5, s6, s7]
 ghci> topology
 fromList [fromList [],fromList [1],fromList [1,2],fromList [1,2,3],fromList [1,2,3,4],fromList [1,3],fromList [1,3,4],fromList [3],fromList [3,4]]
 
-\end{showCode}
+$\end{showCode}
 
-We can define a Topological space in Haskell.
+Now, we can define a topological space in Haskell.
 
 \begin{code}
 data TopoSpace a = TopoSpace (Set a) (Set (Set a))
@@ -150,7 +152,7 @@ fixTopoSpace (TopoSpace sp topo)
 
 Examples of using the above:
 \begin{showCode}
-ghci> isTopoSpace (TopoSpace (arbUnion \$ S.fromList [s5, s6, s7]) topology)
+ghci> isTopoSpace (TopoSpace (arbUnion $ S.fromList [s5, s6, s7]) topology)
 ghci> True
 
 ghci> badTS = TopoSpace (S.fromList [1,2,3]) (S.fromList [S.fromList [1,2], S.fromList[2,3]])
@@ -166,30 +168,38 @@ ghci> True
 
 ghci> fixTopoSpace (TopoSpace (S.fromList [1,2,3]) topology)
 ghci> error "topology not a subset of the powerset of the space"
-\end{showCode}
+$\end{showCode}
 
 The elements of $\tau$ are called \textit{open sets} or \textit{opens}.
-A set $C \subseteq X$ is called a \textit{closed set} if it is the complement
-of an open set, i.e., it is of the form $X \setminus U$ for some $U \in \tau$.
-
-We let $\overline{\tau} = \{X \setminus U | U \in \tau \}$ denote the family of all
-closed sets of $(X, \tau)$.
-
-A set $A \subseteq X$ is called \textit{clopen} if it is both closed and open.
+Given a point $x \in X$, we call the set of all opens containing $x$ the \emph{open neighbourhoods of $x$}.
 
 \begin{code}
-
-openNbds :: (Eq a) => a -> TopoSpace a -> Set (Set a)
-openNbds x (TopoSpace _ opens) = S.filter (x `elem`) opens
-
-closeds :: (Ord a) => TopoSpace a -> Set (Set a)
-closeds (TopoSpace space opens) = S.map (space \\) opens
 
 isOpenIn :: (Eq a) => Set a -> TopoSpace a -> Bool
 isOpenIn set (TopoSpace _ opens) = set `elem` opens
 
+openNbds :: (Eq a) => a -> TopoSpace a -> Set (Set a)
+openNbds x (TopoSpace _ opens) = S.filter (x `elem`) opens
+
+\end{code}
+
+A set $C \subseteq X$ is called a \textit{closed set} if it is the complement of an open set, i.e., $C = X \setminus U$ for some $U \in \tau$.
+
+We let $\closure{\tau} := \{X \setminus U \mid U \in \tau \}$ denote the family of all closed sets of $(X, \tau)$.
+
+\begin{code}
+
+closeds :: (Ord a) => TopoSpace a -> Set (Set a)
+closeds (TopoSpace space opens) = S.map (space \\) opens
+
 isClosedIn :: (Eq a, Ord a) => Set a -> TopoSpace a -> Bool
 isClosedIn set topoSpace = set `elem` closeds topoSpace
+
+\end{code}
+
+A subset $S \subseteq X$ is called \textit{clopen} if it is both closed and open, i.e. $A \in \tau$ and $A \in \closure{\tau}$.
+
+\begin{code}
 
 isClopenIn :: (Eq a, Ord a) => Set a -> TopoSpace a -> Bool
 isClopenIn set topoSpace = set `isOpenIn` topoSpace && set `isClosedIn` topoSpace
@@ -217,11 +227,27 @@ True
 
 \end{showCode}
 
-The \textit{interior} of a subset $S$ of a topological space $X$
-is the union of all open subsets of $S$.
+Given some topological space $\XX := (X, \tau)$, a \emph{basis} for $\XX$ is a subset $\beta \sub \tau$ such that $\tau$ is equal to the closure of $\beta$ under arbitrary unions.
 
-The \textit{closure} of a subset $S$ of a topological space $X$
-is the intersection of all closed subsets containing $S$. 
+A \emph{subbasis} for $\XX$ is a subset $\sigma \sub \tau$ such that the closure of $\sigma$ under finite intersections forms a basis for $\XX$.
+
+\begin{code}
+
+isBasisFor :: (Ord a) => Set (Set a) -> TopoSpace a -> Bool
+isBasisFor sets (TopoSpace _ opens) = closeUnderUnion sets == opens
+
+isSubbasisFor :: (Ord a) => Set (Set a) -> TopoSpace a -> Bool
+isSubbasisFor sets topoSpace = closeUnderIntersection sets `isBasisFor` topoSpace
+
+\end{code}
+
+Given some topological space $(X, \tau)$ and a subset $S \sub X$, the \textit{interior} of $S$, denoted by $\interior(S)$, is the union of all open subsets of $S$, i.e.
+  \[ \bigunion \compin{U}{\tau}{U \sub S}\]
+
+The \textit{closure} of $S$, denoted by $\closure{S}$, is the intersection of all closed supersets of $S$, i.e.
+  \[ \biginter \compin{C}{\closure{\tau}}{S \sub C}\]
+
+Here we implement the union and intersection functions utilised above as well as the interior and closure operations.
 
 \begin{code}
 
