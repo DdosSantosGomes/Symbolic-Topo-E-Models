@@ -5,7 +5,7 @@
 
 module Semantics where
 
-import Data.Set qualified as S
+import qualified Data.Set as S
 
 import Syntax
 import TopoModels

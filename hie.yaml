@@ -5,9 +5,6 @@ cradle:
 
     - path: "./exec/Main.lhs"
       component: "topomodels:exe:myprogram"
-
-    - path: "./exec/Paths_report.hs"
-      component: "topomodels:exe:myprogram"
-
+      
     - path: "./test"
-      component: "topomodels:test:simpletests"
+      component: "topomodels:test:tests"

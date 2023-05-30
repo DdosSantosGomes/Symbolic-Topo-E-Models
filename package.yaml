@@ -14,6 +14,7 @@ dependencies:
   - random
   - QuickCheck
   - containers
+  - hspec
 
 library:
   source-dirs: lib
@@ -26,8 +27,8 @@ executables:
       - topomodels
 
 tests:
-  texts:
-    main: texts.lhs
+  tests:
+    main: tests.lhs
     source-dirs: test
     dependencies:
       - topomodels
