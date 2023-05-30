@@ -90,7 +90,10 @@ $\end{showCode}
 Now, we can define a topological space in Haskell.
 
 \begin{code}
-data TopoSpace a = TopoSpace (Set a) (Set (Set a))
+data TopoSpace a
+    = TopoSpace
+        (Set a) -- Carrier set
+        (Set (Set a)) -- Topology
     deriving (Eq, Show)
 \end{code}
 
