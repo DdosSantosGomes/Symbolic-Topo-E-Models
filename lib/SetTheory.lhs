@@ -48,39 +48,29 @@ closeUnderIntersection sets = do
 
 type Relation a = Set (a, a)
 
-domain :: (Ord a) => Relation a -> Set a
-domain = S.map fst
-
-range :: (Ord a) => Relation a -> Set a
-range = S.map snd
-
 field :: (Ord a) => Relation a -> Set a
-field relation = domain relation `union` range relation
+field relation = domain `union` range
+  where
+    domain = S.map fst relation
+    range = S.map snd relation
 
 imageIn :: (Ord a) => a -> Relation a -> Set a
 imageIn element relation = S.map snd $ S.filter (\(x, _) -> x == element) relation
 
-onceMakeTransitive :: (Ord a) => Relation a -> Set (a, a)
+onceMakeTransitive :: (Ord a) => Relation a -> Relation a
 onceMakeTransitive relation = do
     let relField = field relation
     let fieldCubed = cartesianProduct (cartesianProduct relField relField) relField
-    let relTriples = S.filter (\((x, y), z) -> (x, y) `member` relation && (y, z) `member` relation) fieldCubed 
+    let relTriples = S.filter (\((x, y), z) -> (x, y) `member` relation && (y, z) `member` relation) fieldCubed
     let additions = S.map (\((x, _), z) -> (x, z)) relTriples
     relation `union` additions
 
-makeTransitive :: (Ord a) => Relation a -> Set (a, a)
+makeTransitive :: (Ord a) => Relation a -> Relation a
 makeTransitive relation = do
     let oneUp = onceMakeTransitive relation
     if relation == oneUp
         then relation
         else makeTransitive oneUp
-{-
-    Here we make use of the following two facts true an all finite pre-orders:
-        1. All upsets are (finite) unions of principle upsets
-        2. All principle upsets are images of points
--}
-upsets :: (Ord a) => Relation a -> Set (Set a)
-upsets relation = closeUnderUnion $ S.map (`imageIn` relation) (field relation)
 
 \end{code}
 
