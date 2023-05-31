@@ -9,7 +9,7 @@ import Data.Set qualified as S
 import Test.QuickCheck (Arbitrary (arbitrary), suchThat)
 
 import Models (Valuation, randomVal)
-import SetTheory (isOfSizeBetween, makeTransitive, setElements, subsetOf)
+import SetTheory (Relation, isOfSizeBetween, makeTransitive, setElements, subsetOf)
 
 \end{code}
 
@@ -18,7 +18,7 @@ import SetTheory (isOfSizeBetween, makeTransitive, setElements, subsetOf)
 data S4KripkeFrame a
     = S4KF
         (Set a) -- Carrier set
-        (Set (a, a)) -- Relation
+        (Relation a) -- Relation
     deriving (Eq, Show)
 
 data S4KripkeModel a = S4KM (S4KripkeFrame a) (Valuation a)
