@@ -17,25 +17,25 @@ import Test.QuickCheck (Arbitrary, Gen, elements, listOf1, oneof, sublistOf)
 
 \begin{code}
 
-unionize :: (Ord a) => Set (Set a) -> Set (Set a)
-unionize sets = S.map (uncurry union) (cartesianProduct sets sets)
+onceCloseUnderUnion :: (Ord a) => Set (Set a) -> Set (Set a)
+onceCloseUnderUnion sets = S.map (uncurry union) (cartesianProduct sets sets)
 
-intersectionize :: (Ord a) => Set (Set a) -> Set (Set a)
-intersectionize sets = S.map (uncurry intersection) (cartesianProduct sets sets)
+onceCloseUnderIntersection :: (Ord a) => Set (Set a) -> Set (Set a)
+onceCloseUnderIntersection sets = S.map (uncurry intersection) (cartesianProduct sets sets)
 
 -- The closure definitions defined below are finite, but it is sufficient for our purposes
 -- since we will only work with finite models.
 
 closeUnderUnion :: (Ord a) => Set (Set a) -> Set (Set a)
 closeUnderUnion sets = do
-    let oneUp = unionize sets
+    let oneUp = onceCloseUnderUnion sets
     if sets == oneUp
         then sets
         else closeUnderUnion oneUp
 
 closeUnderIntersection :: (Ord a) => Set (Set a) -> Set (Set a)
 closeUnderIntersection sets = do
-    let oneUp = intersectionize sets
+    let oneUp = onceCloseUnderIntersection sets
     if sets == oneUp
         then sets
         else closeUnderIntersection oneUp
@@ -46,32 +46,41 @@ closeUnderIntersection sets = do
 
 \begin{code}
 
-domain :: (Ord a) => Set (a, a) -> Set a
+type Relation a = Set (a, a)
+
+domain :: (Ord a) => Relation a -> Set a
 domain = S.map fst
 
-range :: (Ord a) => Set (a, a) -> Set a
+range :: (Ord a) => Relation a -> Set a
 range = S.map snd
 
-field :: (Ord a) => Set (a, a) -> Set a
+field :: (Ord a) => Relation a -> Set a
 field relation = domain relation `union` range relation
 
-imageIn :: (Ord a) => a -> Set (a, a) -> Set a
+imageIn :: (Ord a) => a -> Relation a -> Set a
 imageIn element relation = S.map snd $ S.filter (\(x, _) -> x == element) relation
 
-transitivize :: (Ord a) => Set (a, a) -> Set (a, a)
-transitivize relation = do
+onceMakeTransitive :: (Ord a) => Relation a -> Set (a, a)
+onceMakeTransitive relation = do
     let relField = field relation
     let fieldCubed = cartesianProduct (cartesianProduct relField relField) relField
-    let relTriples = S.filter (\((x, y), z) -> (x, y) `member` relation && (y, z) `member` relation) fieldCubed
+    let relTriples = S.filter (\((x, y), z) -> (x, y) `member` relation && (y, z) `member` relation) fieldCubed 
     let additions = S.map (\((x, _), z) -> (x, z)) relTriples
     relation `union` additions
 
-makeTransitive :: (Ord a) => Set (a, a) -> Set (a, a)
+makeTransitive :: (Ord a) => Relation a -> Set (a, a)
 makeTransitive relation = do
-    let oneUp = transitivize relation
+    let oneUp = onceMakeTransitive relation
     if relation == oneUp
         then relation
         else makeTransitive oneUp
+{-
+    Here we make use of the following two facts true an all finite pre-orders:
+        1. All upsets are (finite) unions of principle upsets
+        2. All principle upsets are images of points
+-}
+upsets :: (Ord a) => Relation a -> Set (Set a)
+upsets relation = closeUnderUnion $ S.map (`imageIn` relation) (field relation)
 
 \end{code}
 

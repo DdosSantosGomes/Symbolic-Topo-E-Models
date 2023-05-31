@@ -1,23 +1,28 @@
 {
-    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.texout/%RELATIVE_DIR%",
-    "latex-workshop.latex.autoBuild.run": "onSave",
-    "cSpell.enableFiletypes": [
-        "!haskell"
-    ],
-    
     "[haskell]": {
-        "editor.formatOnSave": true,
         "editor.defaultFormatter": "haskell.haskell",
+        "editor.formatOnSave": true,
         "editor.rulers": [
             80,
             120
         ],
         "editor.tabSize": 4
     },
+    "[literate haskell]": {
+        "editor.rulers": [
+            80,
+            120
+        ]
+    },
+    "cSpell.enableFiletypes": [
+        "!haskell"
+    ],
     "cSpell.language": "en-GB",
     "cSpell.words": [
         "bisimilar",
         "bisimulation",
-        "bisimulations",
-    ]
+        "bisimulations"
+    ],
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.texout/%RELATIVE_DIR%"
 }
