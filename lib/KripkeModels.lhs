@@ -37,7 +37,7 @@ instance (Arbitrary a, Ord a) => Arbitrary (S4KripkeFrame a) where
     arbitrary = do
         (carrier :: Set a) <- arbitrary `suchThat` (\set -> isOfSizeBetween set 1 10)
         let carrierSquared = cartesianProduct carrier carrier
-        (randomRelation :: Set (a, a)) <- subsetOf carrierSquared
+        (randomRelation :: Relation a) <- subsetOf carrierSquared
         let diagonal = S.filter (uncurry (==)) carrierSquared
         let reflexiveRelation = randomRelation `union` diagonal
         let s4Relation = makeTransitive reflexiveRelation
