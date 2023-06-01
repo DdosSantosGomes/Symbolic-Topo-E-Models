@@ -24,5 +24,5 @@
         "bisimulations"
     ],
     "latex-workshop.latex.autoBuild.run": "onSave",
-    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/.texout/%RELATIVE_DIR%"
+    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/docs"
 }

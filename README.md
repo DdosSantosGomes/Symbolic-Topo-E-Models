@@ -1,3 +1,3 @@
 # Topomodels
 
-See `.texout/report/Topomodels.pdf` for documentation.
+See `docs/report.pdf` or `docs/presentation.pdf` for documentation.
