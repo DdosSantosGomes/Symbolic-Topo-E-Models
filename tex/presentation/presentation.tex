@@ -374,12 +374,37 @@
 
 \begin{frame}
 	\frametitle{The upset topology}
+
+	Given a pre-order $\mathbf{X} := (X, R)$, an \emph{upset} is a subset $S \sub X$ such that
+		\[ (\forall x \in X)(x \in S \text{ and } xRy \text{ implies } y \in S) \]
+
+	\bigskip
+
+	We denote that set of all upsets on $\mathbf{X}$ by $\text{Up}(\mathbf{X})$.
+
+	\bigskip
+
+	Observe that $(X, \text{Up}(\mathbf{X}))$ is an Alexandrov topospace, so given an \textbf{S4} Kripke model, we can create a topomodel satisfying the same theory.
+
 \end{frame}
 
 %------------------------------------------------
 
 \begin{frame}
 	\frametitle{The specialisation order}
+
+	Given an topospace $\mathbf{X} := (X, \tau)$, we can define the \emph{specialisation order on $\mathbf{X}$} as follows:
+	\begin{align*}
+		xR_{\mathbf{X}}y &:\Longleftrightarrow y \in \text{Cl}(\set{x}) \\
+		                 &~\Longleftrightarrow y \in \biginter \compsub{C}{X}{ X-C \in \tau \text{ and } \set{x} \sub C} \\
+		                 &~\Longleftrightarrow y \in \biginter \compsub{C}{X}{ X-C \in \tau \text{ and } x \in C} \\
+		                 &~\Longleftrightarrow (\forall C \sub X)(X-C \in \tau \text{ and } x \in C \mimp y \in C)
+	\end{align*}
+
+	\bigskip
+
+	Observe that $R_{\mathbf{X}}$ is a pre-order, so given an topomodel, we can create an \textbf{S4} Kripke model satisfying the same theory.
+
 \end{frame}
 
 %------------------------------------------------
