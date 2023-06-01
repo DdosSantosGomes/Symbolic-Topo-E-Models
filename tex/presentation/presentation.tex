@@ -128,9 +128,9 @@
 
 %\useoutertheme{default}
 %\useoutertheme{infolines}
-%\useoutertheme{miniframes}
+\useoutertheme{miniframes}
 %\useoutertheme{sidebar}
-\useoutertheme{split}  % Favourite
+%\useoutertheme{split}  % Favourite
 %\useoutertheme{tree}
 
 %\setbeamertemplate{footline} % Uncomment this line to remove the footer line in all slides
@@ -144,13 +144,13 @@
 
 \title[Topomodels]{Topomodels} % The short title in the optional parameter appears at the bottom of every slide, the full title in the main parameter is only on the title page
 
-\subtitle{An implementation of topological semantics for modal logic in Haskell} % Presentation subtitle, remove this command if a subtitle isn't required
+\subtitle{An implementation of topological semantics \\ for modal logic in Haskell} % Presentation subtitle, remove this command if a subtitle isn't required
 
 \author[David Álvarez Lombardi \& Paulius Sakaisgiris]{David Álvarez Lombardi \and Paulius Sakaisgiris} % Presenter name(s), the optional parameter can contain a shortened version to appear on the bottom of every slide, while the main parameter will appear on the title slide
 
 \institute[ILLC]{Institute for Logic, Language, and Computation \\ \smallskip University of Amsterdam} % Your institution, the optional parameter can be used for the institution shorthand and will appear on the bottom of every slide after author names, while the required parameter is used on the title slide and can include your email address or additional information on separate lines
 
-\date[16 May 2023]{Functional Programming\\ \smallskip Friday, 2 June 2023} % Presentation date or conference/meeting name, the optional parameter can contain a shortened version to appear on the bottom of every slide, while the required parameter value is output to the title slide
+\date[Friday, 2 June 2023]{Functional Programming\\ \smallskip Friday, 2 June 2023} % Presentation date or conference/meeting name, the optional parameter can contain a shortened version to appear on the bottom of every slide, while the required parameter value is output to the title slide
 
 %----------------------------------------------------------------------------------------
 
@@ -181,48 +181,230 @@
 %    PRESENTATION BODY SLIDES
 %----------------------------------------------------------------------------------------
 
-\section{Placeholder section}
+\section{Motivation}
 
 %------------------------------------------------
 
 \begin{frame}
-	\frametitle{Placeholder title}
+	\frametitle{Motivation}
+\end{frame}
+
+%------------------------------------------------
+
+\section{Modal logics}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Normal modal logics}
+
+		Syntax:
+			\[ \varphi := \top
+					\mid \bot
+					\mid \varphi \lor \varphi
+					\mid \varphi \land \varphi
+					\mid \varphi \imp \varphi
+					\mid \neg \varphi
+					\mid \Dia \varphi
+					\mid \Box \varphi \]
+
+		\bigskip
+
+		A \emph{normal modal logic} is a set of formulas of the above form containing K and Dual and closed under \emph{modus ponens}, \emph{uniform substitution}, and \emph{necessitation}.
+
+		\bigskip
+
+		(K)\hspace{1.08cm}$\Box (p \imp q) \imp (\Box p \imp \Box q)$\\
+		(Dual)\hspace{.5cm}$\Box p \leftrightarrow \neg \Dia \neg p$
+
+		\bigskip
+
+		The smallest such logic is denoted by $\mathbf{K}$.
+
+		\bigskip
+
+		The logic \textbf{S4} is defined as $\mathbf{K} \union \set{\Box p \imp \Box \Box p, \Box p \imp p}$
+
+\end{frame}
+
+
+%------------------------------------------------
+
+\section{Kripke models}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Relational semantics for modal logic}
+
+	A \emph{Kripke frame} is a tuple $(X, R)$ where $X$ is a set and $R \sub X \times X$.
+
+	\bigskip
+
+	A \emph{Kripke model} is a triple $(X, R, V)$ where $(X, R)$ is a Kripke frame and $V: \mathbf{Prop} \to \pset{X}$.
+
+	\bigskip
+
+	A \emph{pointed Kripke model} is a 4-tuple $(X, R, V, x)$ where $(X, R, V)$ is a Kripke model and $x \in X$.
+
+	\bigskip
+
+	Key semantic definition:
+		\[ (X, R, V, x) \models \Box \varphi \miff (\forall x' \in X)(xRx' \mimp (X, R, V, x') \models \varphi) \]
 
 \end{frame}
 
 %------------------------------------------------
 
-\subsection{Placeholder subsection}
+\begin{frame}
+	\frametitle{The class \textbf{Pre}}
+
+	A \emph{pre-order} is a tuple $(X, R)$ such that the following hold for all $x, y, z \in X$.
+	\begin{itemize}
+		\item $xRx$
+		\item $xRy$ and $yRz$ implies $xRz$
+	\end{itemize}
+
+	\bigskip
+
+	The class of pre-orders is denoted by $\mathbf{Pre}$.
+
+	\bigskip
+
+	Fact: The logic $\mathbf{S4}$ is sound and complete with respect to the class of frames $\mathbf{Pre}$
+	\begin{align*}
+		\varphi \in \mathbf{S4} &\miff \mathbf{Pre} \models \varphi \\
+		                        &\miff (\forall (X, R) \in \mathbf{Pre})(\forall V \in \pset{X}^{\mathbf{Prop}})(\forall x \in X)\Bl((X, R, V, x) \models \varphi\Br)
+	\end{align*}
+
+\end{frame}
+
+%------------------------------------------------
+
+\section{Topology}
 
 %------------------------------------------------
 
 \begin{frame}
-	\frametitle{Placeholder title}
+	\frametitle{Basic topology}
+
+	A \emph{topological space} is a tuple $(X, \tau)$ where $X$ is a set and $\tau \sub \pset{X}$ where $\tau$ satisfies the following.
+	\begin{itemize}
+		\item $\empty, X \in \tau$
+		\item $S \sub \tau$ and $|S| < \omega$ implies $\biginter S \in \tau$
+		\item $S \sub \tau$ implies $\bigunion S \in \tau$
+	\end{itemize}
+
+	\bigskip
+
+	A set $S$ is \emph{open} if $S \in \tau$, \emph{closed} if $X - S \in \tau$, and \emph{clopen} if it is both open and closed.
 
 \end{frame}
 
-%----------------------------------------------------------------------------------------
-%    REFERENCES
-%----------------------------------------------------------------------------------------
+%------------------------------------------------
 
 \begin{frame}
-	\frametitle{References}
+	\frametitle{Basic topology cont.}
 
+	Given a subset $S \sub X$, the \emph{interior of $S$}, denoted by $\text{int}(S)$, is the largest open subset of $S$, or, equivalently,
+		\[ \bigunion \compin{U}{\tau}{U \sub S} \]
+	The \emph{closure of $S$}, denoted by $\text{cl}(S)$, is the smallest closed superset of $S$, or, equivalently,
+		\[ \biginter \compsub{C}{X}{ X-C \in \tau \text{ and } S \sub C} \]
+
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{The class \textbf{Alx}}
+
+	Recall that a topospace $(X, \tau)$ satisfies the following.
+	\begin{itemize}
+		\item $\empty, X \in \tau$
+		\item $S \sub \tau$ and $|S| < \omega$ implies $\biginter S \in \tau$
+		\item $S \sub \tau$ implies $\bigunion S \in \tau$
+	\end{itemize}
+
+	\bigskip
+
+	A topospace is called \emph{Alexandrov} if it also satisfies the following \emph{strengthening} of the second requirement above.
+	\begin{itemize}
+		\item $S \sub \tau$ \xcancel{and $|S| < \omega$} implies $\biginter S \in \tau$
+	\end{itemize}
+
+	\bigskip
+
+	The class of Alexandrov topospaces is denoted by $\mathbf{Alx}$.
+
+\end{frame}
+
+%------------------------------------------------
+
+\section{Topomodels}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Topological semantics for modal logic}
+
+	A \emph{topomodel} is a triple $(X, \tau, V)$ where $(X, \tau)$ is a topospace and $V: \mathbf{Prop} \to \pset{X}$.
+
+	\bigskip
+
+	A \emph{pointed topomodel} is a 4-tuple $(X, \tau, V, x)$ where $(X, \tau, V)$ is a topomodel and $x \in x$.
+
+	\bigskip
+
+	Key semantic definition:
+		\[ (X, \tau, V, x) \models \Box \varphi \miff (\exists U \in \tau)\Bl(x \in U \text{ and } (\forall y \in U)\Bl((X, \tau, V, y)\models \varphi\Br)\Br) \]
+
+	\bigskip
+
+	This implies that
+		\[ [\![\Box \varphi]\!] = \text{int}\Bl([\![\varphi]\!]\Br)\]
+		\[ [\![\Dia \varphi]\!] = \text{cl}\Bl([\![\varphi]\!]\Br)\]
+
+\end{frame}
+
+%------------------------------------------------
+
+\section{Model conversion}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{The upset topology}
+\end{frame}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{The specialisation order}
+\end{frame}
+
+%------------------------------------------------
+
+\section{Future work}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Future work}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
 %    CLOSING SLIDE
 %----------------------------------------------------------------------------------------
 
-% \begin{frame}[plain] % The optional argument 'plain' hides the headline and footline
-% 	\begin{center}
-% 		{\Huge The End}
+\begin{frame}[plain] % The optional argument 'plain' hides the headline and footline
+	\begin{center}
+		{\Huge The End}
 
-% 		\bigskip\bigskip % Vertical whitespace
+		\bigskip\bigskip % Vertical whitespace
 
-% 		{\LARGE Questions? Comments?}
-% 	\end{center}
-% \end{frame}
+		{\LARGE Questions? Comments?}
+	\end{center}
+\end{frame}
 
 %----------------------------------------------------------------------------------------
 

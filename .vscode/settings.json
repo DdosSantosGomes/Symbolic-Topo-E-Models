@@ -19,9 +19,21 @@
     ],
     "cSpell.language": "en-GB",
     "cSpell.words": [
+        "Alexandrov",
         "bisimilar",
         "bisimulation",
-        "bisimulations"
+        "bisimulations",
+        "clopen",
+        "Fira",
+        "footline",
+        "footlines",
+        "Kripke",
+        "Lato",
+        "Palatino",
+        "topomodel",
+        "topomodels",
+        "topospace",
+        "topospaces"
     ],
     "latex-workshop.latex.autoBuild.run": "onSave",
     "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/docs"
