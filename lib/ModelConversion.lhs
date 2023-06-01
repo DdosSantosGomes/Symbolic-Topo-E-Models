@@ -22,14 +22,15 @@ import Topology (TopoSpace (TopoSpace), closure)
 
 {-
     Here we make use of the following two facts true an all finite pre-orders:
-        1. All upsets are (finite) unions of principle upsets
+        1. All upsets are (finite) unions of principle upsets or the empty set
         2. All principle upsets are images of points
 -}
 toTopoSpace :: (Ord a) => S4KripkeFrame a -> TopoSpace a
 toTopoSpace kripkeFrame = TopoSpace carrier opens
   where
     S4KF carrier relation = kripkeFrame
-    opens = closeUnderUnion $ S.map (`imageIn` relation) carrier
+    nonEmptyUpsets = closeUnderUnion $ S.map (`imageIn` relation) carrier
+    opens = S.insert S.empty nonEmptyUpsets
 
 toS4KripkeFrame :: (Ord a) => TopoSpace a -> S4KripkeFrame a
 toS4KripkeFrame topoSpace = S4KF space relation
