@@ -37,7 +37,13 @@ instance (Arbitrary a, Ord a) => Arbitrary (S4KripkeFrame a) where
     arbitrary = do
         (carrier :: Set a) <- arbitrary `suchThat` (\set -> isOfSizeBetween set 1 10)
         let carrierSquared = cartesianProduct carrier carrier
-        (randomRelation :: Relation a) <- subsetOf carrierSquared
+        let relationIsNotTooBig rel = isOfSizeBetween rel 1 (S.size carrier * 2)
+        {-
+            If no cap is put on this then the resulting frame (after being made
+            reflexive and transitive) will almost always be a complete graph,
+            which is uninteresting.
+        -}
+        (randomRelation :: Relation a) <- subsetOf carrierSquared `suchThat` relationIsNotTooBig
         let diagonal = S.filter (uncurry (==)) carrierSquared
         let reflexiveRelation = randomRelation `union` diagonal
         let s4Relation = makeTransitive reflexiveRelation
