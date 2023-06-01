@@ -146,7 +146,7 @@
 
 \subtitle{An implementation of topological semantics \\ for modal logic in Haskell} % Presentation subtitle, remove this command if a subtitle isn't required
 
-\author[David Álvarez Lombardi \& Paulius Sakaisgiris]{David Álvarez Lombardi \and Paulius Sakaisgiris} % Presenter name(s), the optional parameter can contain a shortened version to appear on the bottom of every slide, while the main parameter will appear on the title slide
+\author[David Álvarez Lombardi \& Paulius Skaisgiris]{David Álvarez Lombardi \and Paulius Skaisgiris} % Presenter name(s), the optional parameter can contain a shortened version to appear on the bottom of every slide, while the main parameter will appear on the title slide
 
 \institute[ILLC]{Institute for Logic, Language, and Computation \\ \smallskip University of Amsterdam} % Your institution, the optional parameter can be used for the institution shorthand and will appear on the bottom of every slide after author names, while the required parameter is used on the title slide and can include your email address or additional information on separate lines
 
@@ -187,7 +187,20 @@
 
 \begin{frame}
 	\frametitle{Motivation}
-\end{frame}
+
+	...There are no good libraries for Topology?
+
+	\bigskip
+
+	...There are no libraries for Topo Models?
+
+	\smallskip
+
+	(To the best of our knowledge, in Github)
+
+	Let's implement them to practice Topology, Modal Logic, their marriage, and Haskell!
+
+	\end{frame}
 
 %------------------------------------------------
 
@@ -409,12 +422,41 @@
 
 %------------------------------------------------
 
-\section{Future work}
+\section{Efficiency Benchmarks}
 
 %------------------------------------------------
 
 \begin{frame}
-	\frametitle{Future work}
+	\frametitle{Benchmarks implemented}
+
+	\begin{itemize}
+		\item Formula satisfaction for S4KripkeModels and TopoModels
+		\item Arbitrary Generation of S4KripkeModels and TopoModels
+		\item Conversion from S4KripkeModels to TopoModels and the other way
+	\end{itemize}
+
+	Results to be seen in the report...
+\end{frame}
+
+\section{Conclusion and future work}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Conclusion and future work}
+
+	Good initial start! The basic mathematical structures are implemented, their
+	correctness tested, benchmarks setup for any future work. Good coding style and package structure.
+
+	In the future, this library could be used to...
+
+	\begin{itemize}
+		\item Perform hypothesis testing for Topology/Modal logic areas
+		\item Implementing Formal Learning Theoretic notions
+		\item Implementing Topo Evidence Models, Topo-Logic
+		\item Futher exploration between Kripke Models and Topo Models (e.g. \textbf{S5} 
+		logic is sound and complete w.r.t topo models whose open sets are closed)
+	\end{itemize}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
