@@ -187,7 +187,16 @@
 
 \begin{frame}
 	\frametitle{Motivation}
-\end{frame}
+
+	...There are no good libraries for Topology?
+
+	\bigskip
+
+	...There are no libraries for Topo Models?
+
+	Let's implement them to practice Topology, Modal Logic, their marriage, and Haskell!
+
+	\end{frame}
 
 %------------------------------------------------
 
@@ -409,12 +418,41 @@
 
 %------------------------------------------------
 
-\section{Future work}
+\section{Efficiency Benchmarks}
 
 %------------------------------------------------
 
 \begin{frame}
-	\frametitle{Future work}
+	\frametitle{Benchmarks implemented}
+
+	\begin{itemize}
+		\item Formula satisfaction for S4KripkeModels vs TopoModels
+		\item Arbitrary Generation of S4KripkeModels vs TopoModels
+		\item Conversion from S4KripkeModels to TopoModels and the other way
+	\end{itemize}
+
+	Results to be seen in the report...
+\end{frame}
+
+\section{Conclusion and future work}
+
+%------------------------------------------------
+
+\begin{frame}
+	\frametitle{Conclusion and future work}
+
+	Good initial start! The basic mathematical structures are implemented, their
+	correctness tested, benchmarks setup for any future work.
+
+	In the future, this library could be used to...
+
+	\begin{itemize}
+		\item Perform hypothesis testing for Topology/Modal logic areas
+		\item Implementing Learning Theoretic notions
+		\item Implementing Topo evidence Models, Topo-Logic
+		\item Futher exploration between Kripke Models and Topo Models (e.g. \textbf{S5} 
+		logic is sound and complete w.r.t topo models whose open sets are closed)
+	\end{itemize}
 \end{frame}
 
 %----------------------------------------------------------------------------------------
