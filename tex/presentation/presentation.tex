@@ -173,8 +173,8 @@
 \begin{frame}
 	\frametitle{Presentation Overview} % Slide title, remove this command for no title
 
-	% \tableofcontents % Output the table of contents (all sections on one slide)
-	\tableofcontents[pausesections] % Output the table of contents (break sections up across separate slides)
+	\tableofcontents % Output the table of contents (all sections on one slide)
+	% \tableofcontents[pausesections] % Output the table of contents (break sections up across separate slides)
 \end{frame}
 
 %----------------------------------------------------------------------------------------
@@ -188,19 +188,17 @@
 \begin{frame}
 	\frametitle{Motivation}
 
-	...There are no good libraries for Topology?
+	...There are no libraries for general topology ?
 
-	\bigskip
+	\bigskip\bigskip
 
-	...There are no libraries for Topo Models?
+	...There are no libraries for topomodels (to the best of our knowledge) ?
 
-	\smallskip
-
-	(To the best of our knowledge, in Github)
+	\bigskip\bigskip
 
 	Let's implement them to practice Topology, Modal Logic, their marriage, and Haskell!
 
-	\end{frame}
+\end{frame}
 
 %------------------------------------------------
 
@@ -438,7 +436,9 @@
 	Results to be seen in the report...
 \end{frame}
 
-\section{Conclusion and future work}
+%------------------------------------------------
+
+\section{Conclusion}
 
 %------------------------------------------------
 
@@ -448,14 +448,15 @@
 	Good initial start! The basic mathematical structures are implemented, their
 	correctness tested, benchmarks setup for any future work. Good coding style and package structure.
 
+	\bigskip
+
 	In the future, this library could be used to...
 
 	\begin{itemize}
-		\item Perform hypothesis testing for Topology/Modal logic areas
-		\item Implementing Formal Learning Theoretic notions
-		\item Implementing Topo Evidence Models, Topo-Logic
-		\item Futher exploration between Kripke Models and Topo Models (e.g. \textbf{S5} 
-		logic is sound and complete w.r.t topo models whose open sets are closed)
+		\item Perform hypothesis testing for topology/modal logic areas
+		\item Implementing Formal Learning-theoretic notions
+		\item Implementing topo-evidence models, topo-logic
+		\item Further exploration between Kripke models and topomodels (e.g. \textbf{S5} logic is sound and complete w.r.t topomodels whose open sets are closed)
 	\end{itemize}
 \end{frame}
 
