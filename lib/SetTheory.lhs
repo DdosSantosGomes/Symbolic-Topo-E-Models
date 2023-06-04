@@ -137,7 +137,7 @@ isOfSizeBetween set lower upper = lower <= S.size set && S.size set <= upper
 
 The following helper functions generate (sub)sets of a specific size. 
 Note that it does NOT guarantee length - it first generates a list and then makes it a set, 
-so if two of the same elements were generated, the resulting set length is smaller than the original list.
+so if two of the same elements were generated, the resulting set length is smaller than the original list. \\
 
 \begin{code}
 setSizeOf :: (Ord a) => Gen a -> Int -> Gen (Set a)

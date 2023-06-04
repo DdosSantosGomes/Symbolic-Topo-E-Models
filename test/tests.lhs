@@ -4,8 +4,8 @@
 module Main where
 
 import KripkeModels ( PointedS4KripkeModel, S4KripkeModel )
-import SetTheory 
-import Topology 
+import SetTheory
+import Topology
 import TopoModels (TopoModel, PointedTopoModel)
 import Syntax
 import Semantics ( Semantics((|=)) )
@@ -15,7 +15,7 @@ import TestHelpers
 import Test.Hspec
     ( hspec, describe, it, shouldBe, shouldThrow, anyException )
 import Test.Hspec.QuickCheck ( prop)
-import Test.QuickCheck () 
+import Test.QuickCheck ()
 import Control.Exception (evaluate)
 
 import Data.Set (Set, isSubsetOf)
@@ -24,19 +24,19 @@ import Data.Set qualified as S
 
 The following lines describe correctness tests for:
 \begin{itemize}
-  \item \verb|TopoSpace| generation. Check whether Topology axioms are valid.
-  \item Interior and closure operators. Check whether Kuratowski axioms 
+  \item \verb|TopoSpace| generation: Check whether Topology axioms are valid.
+  \item Interior and closure operators: Check whether Kuratowski axioms
   for closure and interior are respected.
-  \item Examples from \verb|Topology| module. Simply check whether the result is as expected
+  \item Examples from \verb|Topology| module: Check whether the result is as expected
   as we describe in the \verb|Topology| module.
-  \item \verb|TopoModel| semantics. Check whether \verb|S4KripkeModel|'s and \verb|TopoModel|'s 
-  validate some propositional and modal tautologies and the following axioms:
+  \item \verb|TopoModel| semantics: Check whether \verb|S4KripkeModel|'s an d \verb|TopoModel|'s
+  validate some propositional and modal tautologies and the following axioms.
   \begin{itemize}
     \item $\textbf{K} = \Box (p \to q) \to (\Box p \to \Box q)$
     \item $\textbf{T} = p \to \Dia p$
     \item $\textbf{4} = \Dia \Dia p \to \Dia p$
   \end{itemize}
-  \item \verb|S4KripkeModel| and \verb|TopoModel| correspondence. Similar as the semantics but we 
+  \item \verb|S4KripkeModel| and \verb|TopoModel| correspondence: Similar as the semantics but we
   first generate \verb|TopoModel|, then convert to \verb|S4KripkeModel|, and check if the semantics behave the
   same.
 \end{itemize}
@@ -59,8 +59,8 @@ main = hspec $ do
     prop "Is idempotent for all A \\subseteq X" $ do
         \(STS setA ts) -> closure (setA :: Set Int) ts `shouldBe` closure (closure setA ts) ts
     prop "Distributes over binary unions" $ do
-        \(SSTS setA setB ts) -> 
-          closure ((setA :: Set Int) `S.union` setB) ts `shouldBe` 
+        \(SSTS setA setB ts) ->
+          closure ((setA :: Set Int) `S.union` setB) ts `shouldBe`
           closure setA ts `S.union` closure setB ts
   describe "Kuratowski Axioms for the interior operator" $ do
     prop "Preserves the whole space" $ do
@@ -70,8 +70,8 @@ main = hspec $ do
     prop "Is idempotent for all A \\subseteq X" $ do
          \(STS setA ts) -> interior (setA :: Set Int) ts `shouldBe` interior (interior setA ts) ts
     prop "Distributes over binary intersections" $ do
-        \(SSTS setA setB ts) -> 
-          interior ((setA :: Set Int) `S.intersection` setB) ts `shouldBe` 
+        \(SSTS setA setB ts) ->
+          interior ((setA :: Set Int) `S.intersection` setB) ts `shouldBe`
           interior setA ts `S.intersection` interior setB ts
   describe "Examples from the Topology module" $ do
     it "closeUnderUnion $ Set.fromList [s0, s1, s2]" $ do

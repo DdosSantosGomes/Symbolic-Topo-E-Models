@@ -41,8 +41,6 @@ We also implement a well-known construction for converting topomodels to $\SFour
 
 \input{../../lib/ModelConversion.lhs}
 
-\input{../../test/TestHelpers.lhs}
-
 \input{../../test/tests.lhs}
 
 \section{Benchmarks}
@@ -52,40 +50,46 @@ are more or less efficient than \verb|TopoModel|'s, we implemented a few benchma
 can be found in the directory \verb|bench|, we will omit them from the report for brevity. We have also
 structured the benchmarks in a way that we deem them to be extendable easily.
 
-First, we investigated the question "how efficient is arbitrary formula evaluation on \verb|S4KripkeModel|'s
+First, we investigated the question "How efficient is arbitrary formula evaluation on \verb|S4KripkeModel|'s
 as opposed to \verb|TopoModel|'s?". A single run of the benchmark consists of generating a \verb|S4KripkeModel|,
 then converting to a \verb|TopoModel| and evaluating on an arbitrary formula. This was done 1000 times and the
 results are pictured below.
 
-\includegraphics*[width=\linewidth]{bench-formula-satisfaction.png}
+\begin{center}
+\includegraphics*[width=0.5\linewidth]{bench-formula-satisfaction.png}
+\end{center}
 
-Overall, TopoModels seem to run a bit faser than S4KripkeModels as can be seen from the boxplot. 
-Indeed, the median times reflect that - 8.3e-08 seconds and 7e-08 second respectively. 
-Is it, however, due to the size of the models? 580 out of 1000 times S4KripkeModels were larger 
-than Topo Models. And so, the slight difference in formula evaluation speed must be due to 
+Overall, \verb|TopoModel|'s seem to run a bit faster than \verb|S4KripkeModel|'s as can be seen from the boxplot.
+Indeed, the median times reflect that - 8.3e-08 seconds and 7e-08 second respectively.
+Is it, however, due to the size of the models? 580 out of 1000 times \verb|S4KripkeModel|'s were larger
+than Topo Models. And so, the slight difference in formula evaluation speed must be due to
 Kripke Models being larger.
 
-Second, we investigated the question "how efficient is \verb|S4KripkeModel| vs \verb|TopoModel| generation?". 
+Second, we investigated the question "How efficient is \verb|S4KripkeModel| vs. \verb|TopoModel| generation?".
 We measured the generation of an arbitrary \verb|S4KripkeModel| and an arbitrary \verb|TopoModel|.
 This was done 1000 times and the results are pictured below.
 
-\includegraphics*[width=\linewidth]{bench-model-generation.png}
+\begin{center}
+\includegraphics*[width=0.5\linewidth]{bench-model-generation.png}
+\end{center}
 
-Generating arbitrary S4KripkeModels (median of 3.65e-07 seconds) takes more time than TopoModels 
-(median of 1.79e-07 seconds). With the current constraints of generation, we generate larger 
-S4KripkeModels (823 out of 1000 runs) which also takes more time.
+Generating arbitrary \verb|S4KripkeModel|'s (median of 3.65e-07 seconds) takes more time than \verb|TopoModel|'s
+(median of 1.79e-07 seconds). With the current constraints of generation, we generate larger
+\verb|S4KripkeModel|'s (823 out of 1000 runs) which also takes more time.
 
-Lastly, we investigated the question "how efficient is the conversion from \verb|S4KripkeModel| to \verb|TopoModel|
+Lastly, we investigated the question "How efficient is the conversion from \verb|S4KripkeModel| to \verb|TopoModel|
 and the other way around?". We measured the conversions in either direction.
 This was done 1000 times and the results are pictured below.
 
-\includegraphics*[width=\linewidth]{bench-model-conversion.png}
+\begin{center}
+\includegraphics*[width=0.5\linewidth]{bench-model-conversion.png}
+\end{center}
 
-Converting from S4Kripke models to TopoModels takes slightly longer (median of 8.1e-08 seconds) 
-compared to converting from TopoModels to S4KripkeModels back (median of 6.5e-08 seconds). 
-Similarly as previously, 582 out of 1000 times S4KripkeModels were larger than Topo Models. 
-Even though the resulting TopoModel is smaller than S4KripkeModels, the process itself involves 
-working with the larger S4KripkeModel, which most likely contributes the main runtime overhead.
+Converting from \verb|S4KripkeModel|'s to \verb|TopoModel|'s takes slightly longer (median of 8.1e-08 seconds)
+compared to converting from \verb|TopoModel|'s to \verb|S4KripkeModel|'s back (median of 6.5e-08 seconds).
+Similarly as previously, 582 out of 1000 times \verb|S4KripkeModel|'s were larger than Topo Models.
+Even though the resulting \verb|TopoModel| is smaller than \verb|S4KripkeModel|'s, the process itself involves
+working with the larger \verb|S4KripkeModel|, which most likely contributes the main runtime overhead.
 
 \input{./sections/Conclusion.tex}
 
