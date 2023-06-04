@@ -119,11 +119,3 @@ main = hspec $ do
       \ts -> not ((ts :: PointedTopoModel Int) |= (Box (P 1) `Con` Dia (Neg (P 1))))
 
 \end{code}
-
-
-To run the tests, use \verb|stack test|.
-
-To also find out which part of your program is actually used for these tests,
-run \verb|stack clean && stack test --coverage|. Then look for ``The coverage
-report for ... is available at ... .html'' and open this file in your browser.
-See also: \url{https://wiki.haskell.org/Haskell_program_coverage}.

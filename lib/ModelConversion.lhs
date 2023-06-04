@@ -1,4 +1,7 @@
-\section{ModelConversion}\label{sec:ModelConversion}
+\section{Model conversion}\label{sec:ModelConversion}
+
+In this sections, we implement a method for converting \verb|S4KripkeModel|'s to \verb|TopoModel|'s and vice-versa.
+We follow the construction described in \cite[22-23]{Pac17}. \\
 
 \begin{code}
 
@@ -14,7 +17,17 @@ import Topology (TopoSpace (TopoSpace), closure)
 
 \end{code}
 
-% TODO - Write about equivalence of models
+Given an ordered set $\XX := (X, R)$, an \emph{upset} is a subset $S \sub X$ that satisfies the following for all $x, y \in X$.
+  \[x \in S \text{ and } xRy \text{ implies } y \in S\]
+The term `upset' is used because orders are often depicted using Hasse diagrams where $xRy$ is depicted by the point $y$ being on above $x$, connected by a line.
+We denote the set of all upsets of $\XX$ by $\Up(\XX)$.
+
+Given an $\SFour$ Kripke frame $\XX := (X, R)$, it is a well known fact that $(X, \Up(\XX))$ is a topological space.
+What is more, for all modal formulas $\varphi$, all valuations $V$ on $X$, and all points $x \in X$, we have
+  \[(X, R, V, x) \models \varphi \miff (X, \Up(\XX), V, x) \models \varphi\]
+Observe how the `${\models}$' on the left-hand-side is a relational semantics while on the right-hand-side it is a topo-semantics.
+
+Below we implement this conversion from \verb|S4KripkeModel|'s to \verb|TopoModel|'s. \\
 
 \begin{code}
 
@@ -32,6 +45,19 @@ toTopoSpace kripkeFrame = TopoSpace carrier opens
     nonEmptyUpsets = closeUnderUnion $ S.map (`imageIn` relation) carrier
     opens = S.insert S.empty nonEmptyUpsets
 
+\end{code}
+
+Now we turn to the other conversion.
+
+Given a topospace $(\XX := (X, \tau))$, the \emph{specialisation order $\RX$ on $\XX$} is defined as follows for all $x, y \in \XX$.
+  \[ x \RX y ~:\Longleftrightarrow~ y \in \closure{\set{x}}\]
+It follows quite easily that this relation is reflexive and transitive, implying that $(X, \RX)$ is an $\SFour$ Kripke frame.
+
+Similarly to the other conversion, we get the following for all modal formulas $\varphi$, all valuations $V$ on $X$, and all points $x \in X$.
+  \[(X, \tau, V, x) \models \varphi \miff (X, \RX, V, x) \models \varphi\]
+
+\begin{code}
+
 toS4KripkeFrame :: (Ord a) => TopoSpace a -> S4KripkeFrame a
 toS4KripkeFrame topoSpace = S4KF space relation
   where
@@ -40,7 +66,7 @@ toS4KripkeFrame topoSpace = S4KF space relation
 
 \end{code}
 
-We can extend this definition to (pointed) models.
+Since the carrier sets and valuations remain unchanged, we can extend these conversions to (pointed) models. \\
 
 \begin{code}
 

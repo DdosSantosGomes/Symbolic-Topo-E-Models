@@ -1,19 +1,24 @@
-\section{SetTheory}\label{sec:SetTheory}
+\section{Set theory}\label{sec:SetTheory}
 
-
+In this section we define some set-theoretic helpers that will come in handy in the following sections. \\
 
 \begin{code}
 
 module SetTheory where
 
-import Data.Set (Set, cartesianProduct, intersection, member, union)
+import Data.Set (Set, cartesianProduct, elemAt, intersection, member, union)
 import Data.Set qualified as S
 
 import Test.QuickCheck (Arbitrary, Gen, elements, listOf1, oneof, sublistOf)
 
 \end{code}
 
-% Stuff for working with set algebras
+\subsection{Unions and intersections}
+
+A set of sets $S$ is called \emph{closed under unions} if $T, V \in S$ implies that $T \union V \in S$.
+Similarly, $S$ is called \emph{closed under intersections} if $T, V \in S$ implies that $T \inter V \in S$.
+
+The following functions close a passed set under unions and intersections. \\
 
 \begin{code}
 
@@ -22,9 +27,6 @@ onceCloseUnderUnion sets = S.map (uncurry union) (cartesianProduct sets sets)
 
 onceCloseUnderIntersection :: (Ord a) => Set (Set a) -> Set (Set a)
 onceCloseUnderIntersection sets = S.map (uncurry intersection) (cartesianProduct sets sets)
-
--- The closure definitions defined below are finite, but it is sufficient for our purposes
--- since we will only work with finite models.
 
 closeUnderUnion :: (Ord a) => Set (Set a) -> Set (Set a)
 closeUnderUnion sets = do
@@ -42,7 +44,27 @@ closeUnderIntersection sets = do
 
 \end{code}
 
-% TODO - Stuff for working with relations
+We also include, for convenience, the following functions which correspond to $\bigunion$ and $\biginter$ respectively. \\
+
+\begin{code}
+
+arbUnion :: (Ord a) => Set (Set a) -> Set a
+arbUnion = S.foldr union S.empty
+
+arbIntersection :: (Eq a, Ord a) => Set (Set a) -> Set a
+arbIntersection sets
+    | sets == S.empty = error "Cannot take the intersection of the empty set."
+    | length sets == 1 = firstSet
+    | otherwise = firstSet `intersection` arbIntersection restOfSets
+  where
+    firstSet = elemAt 0 sets
+    restOfSets = S.drop 1 sets
+
+\end{code}
+
+\subsection{Relations}
+
+Below are a couple of simple helper functions for working with binary relations. \\
 
 \begin{code}
 
@@ -56,6 +78,15 @@ field relation = domain `union` range
 
 imageIn :: (Ord a) => a -> Relation a -> Set a
 imageIn element relation = S.map snd $ S.filter (\(x, _) -> x == element) relation
+
+\end{code}
+
+Given a set $X$ and a relation $R \sub X \times X$, we say that $R$ is \emph{transitive} if it satisfies, for all $x, y, z \in X$,
+    \[xRy \text{ and } yRz \text{ implies } xRz\]
+
+Below is a function for making a passed relation transitive. \\
+
+\begin{code}
 
 onceMakeTransitive :: (Ord a) => Relation a -> Relation a
 onceMakeTransitive relation = do
@@ -74,11 +105,13 @@ makeTransitive relation = do
 
 \end{code}
 
-% TODO - Stuff for testing sets
+\subsection{Arbitrary set generation}
+
+Here we define functions that are useful in the (constrained) generation of arbitrary sets.
+These mirror their commonly-used \verb|List|-counterparts, but must be adapted as we work with \verb|Data.Set|.
+Inspiration for this implementation was taken from \link{https://stackoverflow.com/a/35529208}{here}. \\
 
 \begin{code}
-
--- Inspired by https://stackoverflow.com/a/35529208
 
 setOneOf :: Set (Gen a) -> Gen a
 setOneOf = oneof . S.toList

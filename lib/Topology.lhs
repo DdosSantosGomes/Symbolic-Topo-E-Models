@@ -1,78 +1,137 @@
-\section{Topological Preliminaries}\label{sec:Preliminaries}
+\section{Topological preliminaries}\label{sec:Topology}
+
+In this section we define basic topological concepts that will form the foundation for our subsequent definition of topomodels and toposemantics for modal logic. \\
 
 \begin{code}
+
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Topology where
 
-import Data.Set (Set, elemAt, intersection, isSubsetOf, singleton, union, unions, (\\))
+import Data.Set (Set, isSubsetOf, singleton, union, (\\))
 import Data.Set qualified as S
 import Test.QuickCheck (Arbitrary (arbitrary), suchThat)
 
-import SetTheory (closeUnderIntersection, closeUnderUnion, isOfSizeBetween, setElements, setOf1)
+import SetTheory (arbIntersection, arbUnion, closeUnderIntersection, closeUnderUnion, isOfSizeBetween, setElements, setOf1)
 
 \end{code}
 
-This section describes some topological preliminaries which will be necessary
-for defining TopoModels later on. The definitions are taken from the course slides of
-Topology, Logic, Learning given by Alexandru Baltag in Spring 2023. 
+\subsection{Topological spaces}
 
-A \textit{topological space} is a pair $(X, \tau)$ where $X$ is a nonempty set 
-and $\tau \subseteq \pset{X}$ is a family of subsets of $X$ such that
-(1) $\empty \in \tau$ and $X \in \tau$
-(2) $\tau$ is closed under finite intersection: if $U, V \in \tau$ then $U \cap V \in \tau$
-(3) $\tau$ is closed under arbitrary unions: for any subset $A \subseteq \tau$, the union
-   $\bigcup A \in \tau$
-
-Thus, let us first define closure under intersection and closure under unions.
-
-Here we initialise a few sets to test our implementations going forward.
-
-\begin{showCode}
-ghci> (s0 :: Set Int) = S.fromList [1] 
-ghci> (s1 :: Set Int) = S.fromList [2] 
-ghci> (s2 :: Set Int) = S.fromList [3, 4] 
-ghci> (s3 :: Set Int) = S.fromList [1, 2, 3] 
-ghci> (s4 :: Set Int) = S.fromList [2, 3]
-ghci> (s5 :: Set Int) = S.fromList [3, 4]
-ghci> (s6 :: Set Int) = S.fromList [1, 2]
-ghci> (s7 :: Set Int) = S.fromList [1, 3]
-\end{showCode}
-
-Here we provide some examples of closure under intersections and unions.
-
-\begin{showCode}
-
-ghci> closeUnderUnion $ S.fromList [s0, s1, s2]
-fromList [fromList [1],fromList [1,2],fromList [1,2,3,4],fromList [1,3,4],fromList [2],fromList [2,3,4],fromList [3,4]]
-
-ghci> closeUnderIntersection $ S.fromList [s0, s1, s2]
-fromList [fromList [],fromList [1],fromList [2],fromList [3,4]]
-
-ghci> closeUnderUnion $ S.fromList [s3, s4, s5]
-fromList [fromList [1,2,3],fromList [1,2,3,4],fromList [2,3],fromList [2,3,4],fromList [3,4]]
-
-ghci> closeUnderIntersection $ S.fromList [s3, s4, s5]
-fromList [fromList [1,2,3],fromList [2,3],fromList [3],fromList [3,4]]
-
-ghci> topology = (closeUnderUnion . closeUnderIntersection) $ S.fromList [s5, s6, s7]
-ghci> topology
-fromList [fromList [],fromList [1],fromList [1,2],fromList [1,2,3],fromList [1,2,3,4],fromList [1,3],fromList [1,3,4],fromList [3],fromList [3,4]]
-
-$\end{showCode}
-
-Now, we can define a topological space in Haskell.
+A \emph{topological space} (or \emph{topospace}) is a tuple $(X, \tau)$ where $X$ is a non-empty set and $\tau \sub \pset{X}$ is a family of subsets of $X$ such that
+\begin{enumerate}
+  \item $\empty, X \in \tau$
+  \item $S \sub \tau$ and $|S| < \omega$ implies $\biginter S \in \tau$
+  \item $S \sub \tau$ implies $\bigunion S \in \tau$
+\end{enumerate}
 
 \begin{code}
-data TopoSpace a
-    = TopoSpace
-        (Set a) -- Carrier set
-        (Set (Set a)) -- Topology
-    deriving (Eq, Show)
+
+type Topology a = Set (Set a)
+
+data TopoSpace a = TopoSpace (Set a) (Topology a) deriving (Eq, Show)
+
 \end{code}
 
-Now, let us implement an instance for \texttt{Arbitrary} for it. To do so, we will reimplement
-some functions from `QuickCheck` for Sets.
+The elements of $\tau$ are referred to as \emph{open sets}, so we say a subset $S \sub X$ is \emph{open} in $\tau$ if $S \in \tau$.
+Given a point $x \in X$, we call the set of all open sets containing $x$ the \emph{open neighbourhoods of $x$}.
+
+Additionally, we say that $S$ is \emph{closed} (in $\tau$) if $X - A \in \tau$ (i.e. $S$ is the complement of an open set).
+The set of closed sets of $(X, \tau)$ is denoted by $\closure{\tau}$.
+
+Finally, we say that $S$ is \emph{clopen} if it is both open and closed. \\
+
+\begin{code}
+
+isOpenIn :: (Eq a) => Set a -> TopoSpace a -> Bool
+isOpenIn set (TopoSpace _ topology) = set `elem` topology
+
+openNbds :: (Eq a) => a -> TopoSpace a -> Set (Set a)
+openNbds x (TopoSpace _ topology) = S.filter (x `elem`) topology
+
+isClosedIn :: (Eq a, Ord a) => Set a -> TopoSpace a -> Bool
+isClosedIn set (TopoSpace space topology) = space \\ set `elem` topology
+
+closeds :: (Ord a) => TopoSpace a -> Set (Set a)
+closeds (TopoSpace space topology) = S.map (space \\) topology
+
+isClopenIn :: (Eq a, Ord a) => Set a -> TopoSpace a -> Bool
+isClopenIn set topoSpace = set `isOpenIn` topoSpace && set `isClosedIn` topoSpace
+
+\end{code}
+
+Given a topospace $(X, \tau)$ and a subset $S \sub X$, the \emph{interior} of $S$, denoted by $\interior{S}$, is the union of all open subsets of $S$, i.e.
+  \[ \interior{S} := \bigunion \compin{U}{\tau}{U \sub S}\]
+
+The \emph{closure} of $S$, denoted by $\closure{S}$, is the intersection of all closed supersets of $S$, i.e.
+  \[ \closure{S} := \biginter \compin{C}{\closure{\tau}}{S \sub C}\]
+
+\begin{code}
+
+interior :: (Ord a) => Set a -> TopoSpace a -> Set a
+interior set topoSpace = arbUnion opensBelowSet
+  where
+    TopoSpace _ opens = topoSpace
+    opensBelowSet = S.filter (`isSubsetOf` set) opens
+
+closure :: (Ord a) => Set a -> TopoSpace a -> Set a
+closure set topoSpace = arbIntersection closedsAboveSet
+  where
+    closedsAboveSet = S.filter (set `isSubsetOf`) (closeds topoSpace)
+
+\end{code}
+
+\subsection{Bases and Subbases}
+
+Given a topological space $\XX := (X, \tau)$, a \emph{basis} for $\XX$ is a subset $\beta \sub \tau$ such that $\tau$ is equal to the closure of $\beta$ under arbitrary unions.
+
+A \emph{subbasis} for $\XX$ is a subset $\sigma \sub \tau$ such that the closure of $\sigma$ under finite intersections forms a basis for $\XX$. \\
+
+\begin{code}
+
+isBasisFor :: (Ord a) => Set (Set a) -> TopoSpace a -> Bool
+isBasisFor sets (TopoSpace _ opens) = closeUnderUnion sets == opens
+
+isSubbasisFor :: (Ord a) => Set (Set a) -> TopoSpace a -> Bool
+isSubbasisFor sets topoSpace = closeUnderIntersection sets `isBasisFor` topoSpace
+
+\end{code}
+
+\subsection{Arbitrary Topological spaces}
+
+First we include a couple of helper functions.
+
+The first of them checks if the passed \verb|TopoSpace| is, indeed, a topological space (i.e. respects all of the axioms).
+
+The second actually \emph{fixes} a passed \verb|TopoSpace| in the case that it is not \emph{truly} a topological space (i.e. fails to satisfy one of the axioms).
+This is necessary for the generation of arbitrary topospaces later on. \\
+
+\begin{code}
+
+isTopoSpace :: (Ord a) => TopoSpace a -> Bool
+isTopoSpace (TopoSpace space topology)
+    -- Passed space is empty
+    | space == S.empty = False
+    -- Passed topology is not a subset of the power set of passed space
+    | not (arbUnion topology `isSubsetOf` space) = False
+    -- Passed topology is missing the empty set or the full space
+    | S.empty `notElem` topology || space `notElem` topology = False
+    -- Passed topology should be closed under intersections and unions
+    | otherwise = topology == (closeUnderUnion . closeUnderIntersection) topology
+
+fixTopoSpace :: (Ord a) => TopoSpace a -> TopoSpace a
+fixTopoSpace (TopoSpace space topology)
+    -- Throw an error since we don't know how the topology should look like
+    | not (S.unions topology `isSubsetOf` space) = error "topology not a subset of the power set of the space"
+    | S.empty `notElem` topology = fixTopoSpace (TopoSpace space (topology `union` singleton S.empty))
+    | space `notElem` topology = fixTopoSpace (TopoSpace space (topology `union` singleton space))
+    | otherwise = TopoSpace space closedTopology
+  where
+    closedTopology = closeUnderUnion . closeUnderIntersection $ topology
+
+\end{code}
+
+Now we can define a method for generating arbitrary topospaces. \\
 
 \begin{code}
 
@@ -88,161 +147,96 @@ instance (Arbitrary a, Ord a) => Arbitrary (TopoSpace a) where
 
 \end{code}
 
-Let's implement some convenience functions. The first one simply checks if the input \texttt{TopoSpace} 
-object respects all the topology axioms. The second one will fixed any given (potentially broken) \texttt{TopoSpace}
-to have the necessary axioms.
+% ----------------------------------------------------------------------------------------------------------------------
+% We have to decide if we want to include these. -----------------------------------------------------------------------
+% ----------------------------------------------------------------------------------------------------------------------
 
-\begin{code}
-isTopoSpace :: (Ord a) => TopoSpace a -> Bool
-isTopoSpace (TopoSpace sp topo) | S.empty `notElem` topo = False
-                                | sp `notElem` topo = False
-                                | not (unions topo `isSubsetOf` sp) = False
-                                | otherwise = topo == (closeUnderUnion . closeUnderIntersection $ topo)
+% Here we initialise a few sets to test our implementations of topological concepts going forward. \\
 
-fixTopoSpace :: (Ord a) => TopoSpace a -> TopoSpace a
-fixTopoSpace (TopoSpace sp topo) 
-  -- Throw an error since we don't know how the topology should look like
-  | not (S.unions topo `isSubsetOf` sp) = error "topology not a subset of the powerset of the space"
-  | S.empty `notElem` topo = fixTopoSpace (TopoSpace sp (topo `union` S.singleton S.empty))
-  | sp `notElem` topo = fixTopoSpace (TopoSpace sp (topo `union` singleton sp))
-  | otherwise = let verifTopo = closeUnderUnion . closeUnderIntersection $ topo
-                in TopoSpace sp verifTopo
-\end{code}
+% \begin{showCode}
+% ghci> (s0 :: Set Int) = S.fromList [1]
+% ghci> (s1 :: Set Int) = S.fromList [2]
+% ghci> (s2 :: Set Int) = S.fromList [3, 4]
+% ghci> (s3 :: Set Int) = S.fromList [1, 2, 3]
+% ghci> (s4 :: Set Int) = S.fromList [2, 3]
+% ghci> (s5 :: Set Int) = S.fromList [3, 4]
+% ghci> (s6 :: Set Int) = S.fromList [1, 2]
+% ghci> (s7 :: Set Int) = S.fromList [1, 3]
+% \end{showCode}
 
-Examples of using the above:
-\begin{showCode}
-ghci> isTopoSpace (TopoSpace (arbUnion $ S.fromList [s5, s6, s7]) topology)
-ghci> True
+% Here we provide some examples of closure under intersections and unions.
 
-ghci> badTS = TopoSpace (S.fromList [1,2,3]) (S.fromList [S.fromList [1,2], S.fromList[2,3]])
-ghci> isTopoSpace badTS
-ghci> False
+% \begin{showCode}
 
-ghci> goodTS = fixTopoSpace badTS
-ghci> isTopoSpace goodTS
-ghci> True
+% ghci> closeUnderUnion $ S.fromList [s0, s1, s2]
+% fromList [fromList [1],fromList [1,2],fromList [1,2,3,4],fromList [1,3,4],fromList [2],fromList [2,3,4],fromList [3,4]]
 
-ghci> isTopoSpace (fixTopoSpace goodTS)
-ghci> True
+% ghci> closeUnderIntersection $ S.fromList [s0, s1, s2]
+% fromList [fromList [],fromList [1],fromList [2],fromList [3,4]]
 
-ghci> fixTopoSpace (TopoSpace (S.fromList [1,2,3]) topology)
-ghci> error "topology not a subset of the powerset of the space"
-$\end{showCode}
+% ghci> closeUnderUnion $ S.fromList [s3, s4, s5]
+% fromList [fromList [1,2,3],fromList [1,2,3,4],fromList [2,3],fromList [2,3,4],fromList [3,4]]
 
-The elements of $\tau$ are called \textit{open sets} or \textit{opens}.
-Given a point $x \in X$, we call the set of all opens containing $x$ the \emph{open neighbourhoods of $x$}.
+% ghci> closeUnderIntersection $ S.fromList [s3, s4, s5]
+% fromList [fromList [1,2,3],fromList [2,3],fromList [3],fromList [3,4]]
 
-\begin{code}
+% ghci> topology = (closeUnderUnion . closeUnderIntersection) $ S.fromList [s5, s6, s7]
+% ghci> topology
+% fromList [fromList [],fromList [1],fromList [1,2],fromList [1,2,3],fromList [1,2,3,4],fromList [1,3],fromList [1,3,4],fromList [3],fromList [3,4]]
 
-isOpenIn :: (Eq a) => Set a -> TopoSpace a -> Bool
-isOpenIn set (TopoSpace _ opens) = set `elem` opens
+% $\end{showCode}
 
-openNbds :: (Eq a) => a -> TopoSpace a -> Set (Set a)
-openNbds x (TopoSpace _ opens) = S.filter (x `elem`) opens
 
-\end{code}
+% Examples of using the above:
+% \begin{showCode}
+% ghci> isTopoSpace (TopoSpace (arbUnion $ S.fromList [s5, s6, s7]) topology)
+% ghci> True
 
-A set $C \subseteq X$ is called a \textit{closed set} if it is the complement of an open set, i.e., $C = X \setminus U$ for some $U \in \tau$.
+% ghci> badTS = TopoSpace (S.fromList [1,2,3]) (S.fromList [S.fromList [1,2], S.fromList[2,3]])
+% ghci> isTopoSpace badTS
+% ghci> False
 
-We let $\closure{\tau} := \{X \setminus U \mid U \in \tau \}$ denote the family of all closed sets of $(X, \tau)$.
+% ghci> goodTS = fixTopoSpace badTS
+% ghci> isTopoSpace goodTS
+% ghci> True
 
-\begin{code}
+% ghci> isTopoSpace (fixTopoSpace goodTS)
+% ghci> True
 
-closeds :: (Ord a) => TopoSpace a -> Set (Set a)
-closeds (TopoSpace space opens) = S.map (space \\) opens
+% ghci> fixTopoSpace (TopoSpace (S.fromList [1,2,3]) topology)
+% ghci> error "topology not a subset of the power set of the space"
+% $\end{showCode}
 
-isClosedIn :: (Eq a, Ord a) => Set a -> TopoSpace a -> Bool
-isClosedIn set topoSpace = set `elem` closeds topoSpace
+% Examples of using the above:
 
-\end{code}
+% \begin{showCode}
 
-A subset $S \subseteq X$ is called \textit{clopen} if it is both closed and open, i.e. $A \in \tau$ and $A \in \closure{\tau}$.
+% ghci> topoSpace = TopoSpace (S.fromList [1, 2, 3, 4]) topology
 
-\begin{code}
+% ghci> closeds topoSpace
+% fromList [fromList [],fromList [1,2],fromList [1,2,3,4],fromList [1,2,4],fromList [2],fromList [2,3,4],fromList [2,4],fromList [3,4],fromList [4]]
 
-isClopenIn :: (Eq a, Ord a) => Set a -> TopoSpace a -> Bool
-isClopenIn set topoSpace = set `isOpenIn` topoSpace && set `isClosedIn` topoSpace
+% ghci> openNbds 2 topoSpace
+% fromList [fromList [1,2],fromList [1,2,3],fromList [1,2,3,4]]
 
-\end{code}
+% ghci> S.fromList [1] `isOpenIn` topoSpace
+% True
+% ghci> S.fromList [1] `isClosedIn` topoSpace
+% False
+% ghci> S.fromList [] `isClopenIn` topoSpace
+% True
 
-Examples of using the above:
+% \end{showCode}
 
-\begin{showCode}
 
-ghci> topoSpace = TopoSpace (S.fromList [1, 2, 3, 4]) topology
+% Examples of using the above:
 
-ghci> closeds topoSpace
-fromList [fromList [],fromList [1,2],fromList [1,2,3,4],fromList [1,2,4],fromList [2],fromList [2,3,4],fromList [2,4],fromList [3,4],fromList [4]]
+% \begin{showCode}
 
-ghci> openNbds 2 topoSpace
-fromList [fromList [1,2],fromList [1,2,3],fromList [1,2,3,4]]
+% ghci> interior (S.fromList [1]) topoSpace
+% fromList [1]
 
-ghci> S.fromList [1] `isOpenIn` topoSpace
-True
-ghci> S.fromList [1] `isClosedIn` topoSpace
-False
-ghci> S.fromList [] `isClopenIn` topoSpace
-True
+% ghci> closure (S.fromList [1]) topoSpace
+% fromList [1,2]
 
-\end{showCode}
-
-Given some topological space $\XX := (X, \tau)$, a \emph{basis} for $\XX$ is a subset $\beta \sub \tau$ such that $\tau$ is equal to the closure of $\beta$ under arbitrary unions.
-
-A \emph{subbasis} for $\XX$ is a subset $\sigma \sub \tau$ such that the closure of $\sigma$ under finite intersections forms a basis for $\XX$.
-
-\begin{code}
-
-isBasisFor :: (Ord a) => Set (Set a) -> TopoSpace a -> Bool
-isBasisFor sets (TopoSpace _ opens) = closeUnderUnion sets == opens
-
-isSubbasisFor :: (Ord a) => Set (Set a) -> TopoSpace a -> Bool
-isSubbasisFor sets topoSpace = closeUnderIntersection sets `isBasisFor` topoSpace
-
-\end{code}
-
-Given some topological space $(X, \tau)$ and a subset $S \sub X$, the \textit{interior} of $S$, denoted by $\interior(S)$, is the union of all open subsets of $S$, i.e.
-  \[ \bigunion \compin{U}{\tau}{U \sub S}\]
-
-The \textit{closure} of $S$, denoted by $\closure{S}$, is the intersection of all closed supersets of $S$, i.e.
-  \[ \biginter \compin{C}{\closure{\tau}}{S \sub C}\]
-
-Here we implement the union and intersection functions utilised above as well as the interior and closure operations.
-
-\begin{code}
-
-arbUnion :: (Ord a) => Set (Set a) -> Set a
-arbUnion = S.foldr union S.empty
-
-arbIntersection :: (Eq a, Ord a) => Set (Set a) -> Set a
-arbIntersection sets
-    | sets == S.empty = error "Cannot take the intersection of the empty set."
-    | length sets == 1 = firstSet
-    | otherwise = firstSet `intersection` arbIntersection restOfSets
-  where
-    firstSet = elemAt 0 sets
-    restOfSets = S.drop 1 sets
-
-interior :: (Ord a) => Set a -> TopoSpace a -> Set a
-interior set topoSpace = arbUnion opensBelowSet
-  where
-    TopoSpace _ opens = topoSpace
-    opensBelowSet = S.filter (`isSubsetOf` set) opens
-
-closure :: (Ord a) => Set a -> TopoSpace a -> Set a
-closure set topoSpace = arbIntersection closedsAboveSet
-  where
-    closedsAboveSet = S.filter (set `isSubsetOf`) (closeds topoSpace)
-
-\end{code}
-
-Examples of using the above:
-
-\begin{showCode}
-
-ghci> interior (S.fromList [1]) topoSpace
-fromList [1]
-
-ghci> closure (S.fromList [1]) topoSpace
-fromList [1,2]
-
-\end{showCode}
+% \end{showCode}
