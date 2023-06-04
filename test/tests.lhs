@@ -29,7 +29,7 @@ The following lines describe correctness tests for:
   for closure and interior are respected.
   \item Examples from \verb|Topology| module. Simply check whether the result is as expected
   as we describe in the \verb|Topology| module.
-  \item \verb|TopoModel| semantics. Check whether \verb|S4KripkeModel|s and \verb|TopoModel|s 
+  \item \verb|TopoModel| semantics. Check whether \verb|S4KripkeModel|'s and \verb|TopoModel|'s 
   validate some propositional and modal tautologies and the following axioms:
   \begin{itemize}
     \item $\textbf{K} = \Box (p \to q) \to (\Box p \to \Box q)$
