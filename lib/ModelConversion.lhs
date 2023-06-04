@@ -1,7 +1,7 @@
 \section{Model conversion}\label{sec:ModelConversion}
 
 In this sections, we implement a method for converting \verb|S4KripkeModel|'s to \verb|TopoModel|'s and vice-versa.
-We follow the construction described in \cite[22-23]{Pac17}. \\
+We follow the construction described in \cite[pp. 22-23]{Pac17}. \\
 
 \begin{code}
 

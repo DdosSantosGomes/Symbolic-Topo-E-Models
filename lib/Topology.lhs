@@ -1,6 +1,7 @@
 \section{Topological preliminaries}\label{sec:Topology}
 
-In this section we define basic topological concepts that will form the foundation for our subsequent definition of topomodels and toposemantics for modal logic. \\
+In this section we define basic topological concepts that will form the foundation for our subsequent definition of topomodels and toposemantics for modal logic.
+For a more exhaustive treatment of topological structures, see \cite{Eng89}.\\
 
 \begin{code}
 

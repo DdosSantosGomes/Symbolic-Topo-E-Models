@@ -27,6 +27,7 @@ class Semantics m where
 \end{code}
 
 In both of the below-defined instances of \verb|Semantics|, the Boolean cases are defined in the same, standard way, so we will only comment on the key modal cases.
+For the Boolean cases, see \cite[pp. 17-18]{Bla01}.
 
 \subsection{Kripke semantics}
 
@@ -38,7 +39,6 @@ Given a \emph{pointed} $\SFour$ Kripke model $(X, R, V, x)$, we define the follo
 
 Given an $\SFour$ Kripke model $(X, R, V)$ (without a point), we also define the following for all formulas $\varphi$ in our modal language.
   \[ (X, R, V) \models \varphi ~:\Longleftrightarrow~ \forall x \in X ((X, R, V, x) \models \varphi) \]
-
 
 \begin{code}
 
