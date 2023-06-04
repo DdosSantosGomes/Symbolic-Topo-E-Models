@@ -30,6 +30,7 @@
         "bisimilar",
         "bisimulation",
         "bisimulations",
+        "boxplot",
         "clopen",
         "closeds",
         "compin",
@@ -42,6 +43,7 @@
         "ghci",
         "Hasse",
         "Kripke",
+        "Kuratowski",
         "Lato",
         "mathbf",
         "Nbds",
@@ -64,5 +66,6 @@
         "varphi"
     ],
     "latex-workshop.latex.autoBuild.run": "onSave",
-    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/docs"
+    "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/docs",
+    "files.trimTrailingWhitespace": true
 }
