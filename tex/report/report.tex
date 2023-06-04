@@ -24,19 +24,26 @@ hypotheses about general topology, modal logic, and their intersection.
 
 \clearpage
 
-
 \section{Introduction}
-\TODO
+
+In \S \ref{sec:Syntax}, we describe the syntax of basic modal logic.
+This will define the formal language used throughout the rest of the paper.
+In \S \ref{sec:SetTheory}, we implement several functions that are necessary for working with relations, topologies, and generating arbitrary sets.
+In \S \ref{sec:Topology}, we define a library for working with topological spaces.
+In \S \ref{sec:Models} through \S \ref{sec:TopoModels} , we define the models for our modal language.
+In \S \ref{sec:Semantics}, we define what it means for our formulas to be true on these models.
+In \S \ref{sec:ModelConversion}, we define how to convert between these models.
+Finally in sections \ref{sec:tests} and \ref{sec:Benchmarks} we describe how our library was tested and benchmarked.
 
 \input{../../lib/Syntax.lhs}
 
 \input{../../lib/SetTheory.lhs}
 
+\input{../../lib/Topology.lhs}
+
 \input{../../lib/Models.lhs}
 
 \input{../../lib/KripkeModels.lhs}
-
-\input{../../lib/Topology.lhs}
 
 \input{../../lib/TopoModels.lhs}
 
@@ -46,7 +53,7 @@ hypotheses about general topology, modal logic, and their intersection.
 
 \input{../../test/tests.lhs}
 
-\section{Benchmarks}
+\section{Benchmarks}\label{sec:Benchmarks}
 
 To test the efficiency of our implementation and to investigate whether \verb|S4KripkeModel|'s
 are more or less efficient than \verb|TopoModel|'s, we implemented a few benchmarks. The benchmark code
