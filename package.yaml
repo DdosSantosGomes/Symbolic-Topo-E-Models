@@ -15,6 +15,7 @@ dependencies:
   - QuickCheck
   - containers
   - hspec
+  - time
 
 library:
   source-dirs: lib
@@ -27,3 +28,31 @@ tests:
       - topomodels
       - QuickCheck
       - hspec
+
+benchmarks:
+  bench-BenchFormulaSatisfaction:
+    source-dirs: bench
+    main: BenchFormulaSatisfaction.hs
+    ghc-options:  -main-is BenchFormulaSatisfaction
+    dependencies:
+      - base
+      - topomodels
+      - time
+
+  bench-BenchModelConversion:
+    source-dirs: bench
+    main: BenchModelConversion.hs
+    ghc-options:  -main-is BenchModelConversion
+    dependencies:
+      - base
+      - topomodels
+      - time
+
+  bench-BenchModelGeneration:
+    source-dirs: bench
+    main: BenchModelGeneration.hs
+    ghc-options:  -main-is BenchModelGeneration
+    dependencies:
+      - base
+      - topomodels
+      - time

@@ -5,3 +5,15 @@ cradle:
 
     - path: "./test"
       component: "topomodels:test:tests"
+
+    - path: "./bench/BenchHelpers.hs"
+      component: "topomodels:bench:bench-BenchHelpers"
+
+    - path: "./bench/BenchFormulaSatisfaction.hs"
+      component: "topomodels:bench:bench-BenchFormulaSatisfaction"
+
+    - path: "./bench/BenchModelConversion.hs"
+      component: "topomodels:bench:bench-BenchModelConversion"
+
+    - path: "./bench/BenchModelGeneration.hs"
+      component: "topomodels:bench:bench-BenchModelGeneration"
