@@ -22,6 +22,25 @@ import Data.Set (Set, isSubsetOf)
 import Data.Set qualified as S
 \end{code}
 
+The following lines describe correctness tests for:
+\begin{itemize}
+  \item \verb|TopoSpace| generation. Check whether Topology axioms are valid.
+  \item Interior and closure operators. Check whether Kuratowski axioms 
+  for closure and interior are respected.
+  \item Examples from \verb|Topology| module. Simply check whether the result is as expected
+  as we describe in the \verb|Topology| module.
+  \item \verb|TopoModel| semantics. Check whether \verb|S4KripkeModel|s and \verb|TopoModel|s 
+  validate some propositional and modal tautologies and the following axioms:
+  \begin{itemize}
+    \item $\textbf{K} = \Box (p \to q) \to (\Box p \to \Box q)$
+    \item $\textbf{T} = p \to \Dia p$
+    \item $\textbf{4} = \Dia \Dia p \to \Dia p$
+  \end{itemize}
+  \item \verb|S4KripkeModel| and \verb|TopoModel| correspondence. Similar as the semantics but we 
+  first generate \verb|TopoModel|, then convert to \verb|S4KripkeModel|, and check if the semantics behave the
+  same.
+\end{itemize}
+
 \begin{code}
 main :: IO ()
 main = hspec $ do
@@ -128,5 +147,4 @@ main = hspec $ do
       \(S4KMTM km tm) -> (km :: S4KripkeModel Int) |= fourAxiom && tm |= fourAxiom
     prop "Corresponding KMs and TMs satisfy the same formulas" $ do
        \(PS4KMTM km tm, f) -> (km :: PointedS4KripkeModel Int) |= (f :: Form) == tm |= f
-
 \end{code}

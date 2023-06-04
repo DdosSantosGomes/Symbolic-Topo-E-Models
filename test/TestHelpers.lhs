@@ -20,7 +20,7 @@ import Topology ( fixTopoSpace, TopoSpace(..) )
 \end{code}
 
 Artificial new types to give a subset of the space and a topology only used for tests. 
-This allows efficient generation of subsets, instead of random guessing of subsets as a constraint which
+This allows efficient generation of subsets, instead of randomly guessing of subsets as a constraint which
 may take a really long time when testing and may make `QuickCheck` give up.
 
 \begin{code}
@@ -95,6 +95,8 @@ topoSpace :: TopoSpace Int
 topoSpace = TopoSpace (S.fromList [1, 2, 3, 4]) topology
 
 \end{code}
+
+Modal logic axioms that our models are supposed to validate.
 
 \begin{code}
 
