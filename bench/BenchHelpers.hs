@@ -3,6 +3,11 @@
 
 module BenchHelpers where
 
+import Data.Set (Set, cartesianProduct, union)
+import Data.Set qualified as S
+import Test.QuickCheck (Arbitrary (arbitrary), Gen, elements, oneof, suchThat)
+import Text.Printf (printf)
+
 import KripkeModels (
     PointedS4KripkeModel (..),
     S4KripkeFrame (..),
@@ -21,18 +26,6 @@ import SetTheory (
 import Syntax (Form (..))
 import TopoModels (PointedTopoModel (..), TopoModel (..))
 import Topology (TopoSpace (..), fixTopoSpace)
-
-import Data.Set (Set, cartesianProduct, union)
-import Data.Set qualified as S
-
-import Test.QuickCheck (
-    Arbitrary (arbitrary),
-    Gen,
-    elements,
-    oneof,
-    suchThat,
- )
-import Text.Printf (printf)
 
 printAndAppendToFile :: String -> String -> IO ()
 printAndAppendToFile fileName someString = do
