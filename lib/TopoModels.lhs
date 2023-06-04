@@ -1,4 +1,6 @@
-\section{TopoModels}\label{sec:TopoModels}
+\section{Topomodels}\label{sec:TopoModels}
+
+In this section we define topological models of modal logic. \\
 
 \begin{code}
 
@@ -13,6 +15,16 @@ import Models (Valuation, randomVal)
 import SetTheory (setElements)
 import Topology (TopoSpace (TopoSpace))
 
+\end{code}
+
+\subsection{Topomodels}
+
+A \emph{topomodel} is a triple $(X, \tau, V)$ where $(X, \tau)$ is a topospace and $V$ is a valuation on $X$.
+
+A \emph{pointed topomodel} is a 4-tuple $(X, \tau, V, x)$ where $(X, \tau, V)$ is an topomodel and $x \in X$. \\
+
+\begin{code}
+
 data TopoModel a = TopoModel (TopoSpace a) (Valuation a)
     deriving (Eq, Show)
 
@@ -20,6 +32,12 @@ data PointedTopoModel a = PointedTopoModel (TopoModel a) a
     deriving (Eq, Show)
 
 \end{code}
+
+\subsection{Arbitrary topomodel generation}
+
+Below we define a method for generating arbitrary topomodels.
+
+% TODO - Talk about some of the interesting challenges or implementation details
 
 \begin{code}
 

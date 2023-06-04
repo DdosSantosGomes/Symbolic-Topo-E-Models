@@ -96,7 +96,7 @@
 \def\QQ{\mathbb{Q}}
 \def\RR{\mathbb{R}}
 % Topology
-\def\interior{\text{int}}
+\newcommand{\interior}[1]{\text{int}(#1)}
 \newcommand{\closure}[1]{\overline{#1}}
 % Proof-writing
 \def\subsubqed{\hfill $\checkmark$}
@@ -122,3 +122,10 @@
 \def\XX{\mathbf{X}}
 \def\SFour{\mathbf{S4}}
 \def\Topo{\mathbf{Topo}}
+\def\Alx{\mathbf{Alx}}
+\def\Pre{\mathbf{Pre}}
+\def\Prop{\mathbf{Prop}}
+\newcommand{\link}[2]{\href{#1}{{\color{blue}\underline{#2}}}}
+\def\M{\mathfrak{M}}
+\def\Up{\mathtt{Up}}
+\def\RX{R_{\XX}}

@@ -2,9 +2,9 @@
 \input{latexmacros.tex}
 \input{../definitions.tex}
 
-\title{Topomodels}
+\title{Topomodels in Haskell}
 \author{David Álvarez Lombardi \and Paulius Skaisgiris}
-\date{Sunday 4\textsuperscript{th} June, 2023}
+\date{Sunday, 4 June 2023}
 \hypersetup{pdfauthor={Me}, pdftitle={My Report}}
 
 \begin{document}
@@ -12,10 +12,9 @@
 \maketitle
 
 \begin{abstract}
-\textcolor{red}{\textbf{Finish me.}}
+In this project, we provide a library for working with general topological spaces as well as topomodels for modal logic.
+We also implement a well-known construction for converting topomodels to $\SFour$ Kripke models and back.
 \end{abstract}
-
-\vfill
 
 \tableofcontents
 
@@ -24,11 +23,21 @@
 
 \input{./sections/Introduction.tex}
 
-\input{../../lib/Topology.lhs}
-
 \input{../../lib/Syntax.lhs}
 
+\input{../../lib/SetTheory.lhs}
+
+\input{../../lib/Models.lhs}
+
+\input{../../lib/KripkeModels.lhs}
+
+\input{../../lib/Topology.lhs}
+
+\input{../../lib/TopoModels.lhs}
+
 \input{../../lib/Semantics.lhs}
+
+\input{../../lib/ModelConversion.lhs}
 
 \input{../../exec/Main.lhs}
 
