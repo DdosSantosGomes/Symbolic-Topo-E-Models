@@ -50,8 +50,7 @@ instance Arbitrary Form where
         randomForm 0 = P <$> elements [1 .. 5] -- Fixed vocabulary
         randomForm n =
             oneof
-                [ -- TODO: Add Top and Bot
-                  P <$> elements [1 .. 5]
+                [ P <$> elements [1 .. 5]
                 , Dis
                     <$> randomForm (n `div` 2)
                     <*> randomForm (n `div` 2)

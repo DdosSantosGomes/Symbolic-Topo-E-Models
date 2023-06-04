@@ -97,7 +97,7 @@ isSubbasisFor sets topoSpace = closeUnderIntersection sets `isBasisFor` topoSpac
 
 \end{code}
 
-\subsection{Arbitrary Topological spaces}
+\subsection{Arbitrary topological spaces}
 
 First we include a couple of helper functions.
 
@@ -122,7 +122,7 @@ isTopoSpace (TopoSpace space topology)
 fixTopoSpace :: (Ord a) => TopoSpace a -> TopoSpace a
 fixTopoSpace (TopoSpace space topology)
     -- Throw an error since we don't know how the topology should look like
-    | not (S.unions topology `isSubsetOf` space) = error "topology not a subset of the power set of the space"
+    | not (S.unions topology `isSubsetOf` space) = error "Points in topology are not all members of the space"
     | S.empty `notElem` topology = fixTopoSpace (TopoSpace space (topology `union` singleton S.empty))
     | space `notElem` topology = fixTopoSpace (TopoSpace space (topology `union` singleton space))
     | otherwise = TopoSpace space closedTopology

@@ -35,9 +35,7 @@ data PointedTopoModel a = PointedTopoModel (TopoModel a) a
 
 \subsection{Arbitrary topomodel generation}
 
-Below we define a method for generating arbitrary topomodels.
-
-% TODO - Talk about some of the interesting challenges or implementation details
+Below we define a method for generating arbitrary topomodels. \\
 
 \begin{code}
 

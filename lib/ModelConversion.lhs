@@ -17,9 +17,9 @@ import Topology (TopoSpace (TopoSpace), closure)
 
 \end{code}
 
-Given an ordered set $\XX := (X, R)$, an \emph{upset} is a subset $S \sub X$ that satisfies the following for all $x, y \in X$.
-  \[x \in S \text{ and } xRy \text{ implies } y \in S\]
-The term `upset' is used because orders are often depicted using Hasse diagrams where $xRy$ is depicted by the point $y$ being on above $x$, connected by a line.
+Given a set-relation pair $\XX := (X, R)$, an \emph{upset} is a subset $S \sub X$ that satisfies the following for all $x, y \in X$.
+  \[(x \in S \text{ and } xRy) \text{ implies } y \in S\]
+The term `upset' is used because orders are often depicted using Hasse diagrams where $xRy$ is depicted by the point $y$ being above $x$, connected by a line.
 We denote the set of all upsets of $\XX$ by $\Up(\XX)$.
 
 Given an $\SFour$ Kripke frame $\XX := (X, R)$, it is a well known fact that $(X, \Up(\XX))$ is a topological space.
@@ -27,17 +27,11 @@ What is more, for all modal formulas $\varphi$, all valuations $V$ on $X$, and a
   \[(X, R, V, x) \models \varphi \miff (X, \Up(\XX), V, x) \models \varphi\]
 Observe how the `${\models}$' on the left-hand-side is a relational semantics while on the right-hand-side it is a topo-semantics.
 
-Below we implement this conversion from \verb|S4KripkeModel|'s to \verb|TopoModel|'s. \\
+Below we implement this conversion from \verb|S4KripkeModel|'s to \verb|TopoModel|'s.
+Since we are working with finite models, we can generate all upsets by closing all of the principle upsets under unions (along with the empty set). \\
 
 \begin{code}
 
--- Neighborhood Semantics for Modal Logic (Pacuit)
-
-{-
-    Here we make use of the following two facts true an all finite pre-orders:
-        1. All upsets are (finite) unions of principle upsets or the empty set
-        2. All principle upsets are images of points
--}
 toTopoSpace :: (Ord a) => S4KripkeFrame a -> TopoSpace a
 toTopoSpace kripkeFrame = TopoSpace carrier opens
   where
