@@ -7,7 +7,7 @@
 module TestHelpers where
 
 import Data.Set
-import qualified Data.Set as S
+import Data.Set qualified as S
 import Test.QuickCheck (Arbitrary (arbitrary))
 import TopoModels ( PointedTopoModel, TopoModel )
 import KripkeModels ( PointedS4KripkeModel, S4KripkeModel )

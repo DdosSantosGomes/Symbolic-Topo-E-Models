@@ -4,13 +4,14 @@ In this section we define relational models of modal logic. \\
 
 \begin{code}
 
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module KripkeModels where
 
 import Data.Set (Set, cartesianProduct, union)
-import qualified Data.Set as S
-import Test.QuickCheck (Arbitrary (arbitrary), suchThat, chooseInt)
+import Data.Set qualified as S
+import Test.QuickCheck (Arbitrary (arbitrary), chooseInt, suchThat)
 
 import Models (Valuation, randomVal)
 import SetTheory (Relation, isOfSizeBetween, makeTransitive, setElements, subsetSizeOf)

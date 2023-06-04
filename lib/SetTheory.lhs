@@ -4,10 +4,12 @@ In this section we define some set-theoretic helpers that will come in handy in 
 
 \begin{code}
 
+{-# LANGUAGE ImportQualifiedPost #-}
+
 module SetTheory where
 
 import Data.Set (Set, cartesianProduct, elemAt, intersection, member, union)
-import qualified Data.Set as S
+import Data.Set qualified as S
 
 import Test.QuickCheck (Arbitrary, Gen, elements, listOf1, oneof, sublistOf, vectorOf)
 

@@ -4,10 +4,12 @@ In this section we define some concepts that will be used in the subsequent sect
 
 \begin{code}
 
+{-# LANGUAGE ImportQualifiedPost #-}
+
 module Models where
 
 import Data.Set (Set, union)
-import qualified Data.Set as S
+import Data.Set qualified as S
 import Test.QuickCheck (Arbitrary, Gen)
 
 import SetTheory (subsetOf)

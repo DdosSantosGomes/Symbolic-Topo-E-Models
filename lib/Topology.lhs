@@ -5,12 +5,13 @@ For a more exhaustive treatment of topological structures, see \cite{Eng89}.\\
 
 \begin{code}
 
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Topology where
 
 import Data.Set (Set, isSubsetOf, singleton, union, (\\))
-import qualified Data.Set as S
+import Data.Set qualified as S
 import Test.QuickCheck (Arbitrary (arbitrary), suchThat)
 
 import SetTheory (arbIntersection, arbUnion, closeUnderIntersection, closeUnderUnion, isOfSizeBetween, setElements, setOf1)

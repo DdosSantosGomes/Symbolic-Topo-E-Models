@@ -4,9 +4,11 @@ In this section we define the semantics for the formulas defined in \verb|Syntax
 
 \begin{code}
 
+{-# LANGUAGE ImportQualifiedPost #-}
+
 module Semantics where
 
-import qualified Data.Set as S
+import Data.Set qualified as S
 
 import KripkeModels (PointedS4KripkeModel (PS4KM), S4KripkeFrame (S4KF), S4KripkeModel (S4KM))
 import SetTheory (imageIn)

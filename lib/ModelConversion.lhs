@@ -5,10 +5,12 @@ We follow the construction described in \cite[pp. 22-23]{Pac17}. \\
 
 \begin{code}
 
+{-# LANGUAGE ImportQualifiedPost #-}
+
 module ModelConversion where
 
 import Data.Set (cartesianProduct, member, singleton)
-import qualified Data.Set as S
+import Data.Set qualified as S
 
 import KripkeModels (PointedS4KripkeModel (PS4KM), S4KripkeFrame (S4KF), S4KripkeModel (S4KM))
 import SetTheory (closeUnderUnion, imageIn)

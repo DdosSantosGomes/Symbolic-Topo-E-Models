@@ -19,7 +19,7 @@ import Test.QuickCheck ()
 import Control.Exception (evaluate)
 
 import Data.Set (Set, isSubsetOf)
-import qualified Data.Set as S
+import Data.Set qualified as S
 \end{code}
 
 \begin{code}
