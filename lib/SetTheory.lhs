@@ -9,7 +9,7 @@ module SetTheory where
 import Data.Set (Set, cartesianProduct, elemAt, intersection, member, union)
 import qualified Data.Set as S
 
-import Test.QuickCheck (Arbitrary, Gen, elements, listOf1, oneof, sublistOf)
+import Test.QuickCheck (Arbitrary, Gen, elements, listOf1, oneof, sublistOf, vectorOf)
 
 \end{code}
 
@@ -111,6 +111,7 @@ Here we define functions that are useful in the (constrained) generation of arbi
 These mirror their commonly-used \verb|List|-counterparts, but must be adapted as we work with \verb|Data.Set|.
 Inspiration for this implementation was taken from \link{https://stackoverflow.com/a/35529208}{here}. \\
 
+
 \begin{code}
 
 setOneOf :: Set (Gen a) -> Gen a
@@ -125,7 +126,21 @@ setOf1 = fmap S.fromList . listOf1
 setElements :: Set a -> Gen a
 setElements = elements . S.toList
 
+isOfSize :: Set a -> Int -> Bool
+isOfSize set k = S.size set == k
+
 isOfSizeBetween :: Set a -> Int -> Int -> Bool
 isOfSizeBetween set lower upper = lower <= S.size set && S.size set <= upper
+\end{code}
 
+The following helper functions generate (sub)sets of a specific size. 
+Note that it does NOT guarantee length - it first generates a list and then makes it a set, 
+so if two of the same elements were generated, the resulting set length is smaller than the original list.
+
+\begin{code}
+setSizeOf :: (Ord a) => Gen a -> Int -> Gen (Set a)
+setSizeOf g k = fmap S.fromList (vectorOf k g)
+
+subsetSizeOf :: (Ord a) => Set a -> Int -> Gen (Set a)
+subsetSizeOf set k = fmap S.fromList (vectorOf k (setElements set))
 \end{code}
