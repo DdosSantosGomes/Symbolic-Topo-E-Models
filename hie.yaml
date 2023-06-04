@@ -3,8 +3,5 @@ cradle:
     - path: "./lib"
       component: "topomodels:lib"
 
-    - path: "./exec/Main.lhs"
-      component: "topomodels:exe:myprogram"
-      
     - path: "./test"
       component: "topomodels:test:tests"

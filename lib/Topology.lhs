@@ -9,7 +9,7 @@ In this section we define basic topological concepts that will form the foundati
 module Topology where
 
 import Data.Set (Set, isSubsetOf, singleton, union, (\\))
-import Data.Set qualified as S
+import qualified Data.Set as S
 import Test.QuickCheck (Arbitrary (arbitrary), suchThat)
 
 import SetTheory (arbIntersection, arbUnion, closeUnderIntersection, closeUnderUnion, isOfSizeBetween, setElements, setOf1)

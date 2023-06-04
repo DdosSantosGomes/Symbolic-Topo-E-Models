@@ -7,7 +7,7 @@ In this section we define some concepts that will be used in the subsequent sect
 module Models where
 
 import Data.Set (Set, union)
-import Data.Set qualified as S
+import qualified Data.Set as S
 import Test.QuickCheck (Arbitrary, Gen)
 
 import SetTheory (subsetOf)

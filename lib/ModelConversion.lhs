@@ -8,7 +8,7 @@ We follow the construction described in \cite[22-23]{Pac17}. \\
 module ModelConversion where
 
 import Data.Set (cartesianProduct, member, singleton)
-import Data.Set qualified as S
+import qualified Data.Set as S
 
 import KripkeModels (PointedS4KripkeModel (PS4KM), S4KripkeFrame (S4KF), S4KripkeModel (S4KM))
 import SetTheory (closeUnderUnion, imageIn)

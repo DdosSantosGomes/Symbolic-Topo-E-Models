@@ -1,5 +1,4 @@
-
-\section{Tests}\label{sec:tests}
+\section{Testing}\label{sec:tests}
 
 \begin{code}
 module Main where

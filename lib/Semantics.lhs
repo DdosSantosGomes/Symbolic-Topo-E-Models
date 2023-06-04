@@ -6,7 +6,7 @@ In this section we define the semantics for the formulas defined in \verb|Syntax
 
 module Semantics where
 
-import Data.Set qualified as S
+import qualified Data.Set as S
 
 import KripkeModels (PointedS4KripkeModel (PS4KM), S4KripkeFrame (S4KF), S4KripkeModel (S4KM))
 import SetTheory (imageIn)
@@ -87,7 +87,6 @@ Given a topomodel $(X, \tau, V)$ (without a point), we also define the following
 \begin{code}
 
 instance (Eq a) => Semantics (PointedTopoModel a) where
-    (|=) :: (Eq a) => PointedTopoModel a -> Form -> Bool
     (|=) _ Top = True
     (|=) _ Bot = False
     (|=) pointedModel (P n) = x `elem` worldsWherePnTrue

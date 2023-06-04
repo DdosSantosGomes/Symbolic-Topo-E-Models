@@ -1,19 +1,19 @@
-\section{Test Preliminaries}\label{sec:testHelpers}
+\section{Test Preliminaries}\label{sec:TestHelpers}
 
 \begin{code}
+
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module TestHelpers where
 
-import Topology
-import Syntax
-import TopoModels
-
-import Test.QuickCheck
-    ( Arbitrary(arbitrary), Gen, oneof, sublistOf )
-
-import Data.Set (Set)
+import Data.Set
 import qualified Data.Set as S
+import Test.QuickCheck (Arbitrary (arbitrary))
+
+import SetTheory (closeUnderIntersection, closeUnderUnion, subsetOf)
+import Syntax
+import Topology
+
 \end{code}
 
 Artificial new types to give a subset of the space and a topology only used for tests. 
@@ -37,8 +37,8 @@ instance (Arbitrary a, Ord a) => Arbitrary (SSubsetTopoSpace a) where
   arbitrary = do
     ((TopoSpace space topo)::TopoSpace a) <- arbitrary
     subset <- subsetOf space
-    anothersubset <- subsetOf space
-    return (SSTS subset anothersubset (TopoSpace space topo))
+    anotherSubset <- subsetOf space
+    return (SSTS subset anotherSubset (TopoSpace space topo))
 \end{code}
 
 Example variables from \texttt{Topology} module used for actually running the examples in the test suite.
@@ -72,9 +72,12 @@ goodTS = fixTopoSpace badTS
 
 topoSpace :: TopoSpace Int
 topoSpace = TopoSpace (S.fromList [1, 2, 3, 4]) topology
+
 \end{code}
 
 \begin{code}
+
 kAxiom :: Form
 kAxiom = Box (P 1 `Imp` P 2) `Imp` (Box (P 1) `Imp` Box (P 2))
+
 \end{code}
