@@ -64,8 +64,8 @@ instance (Arbitrary a, Ord a) => Arbitrary (S4KripkeFrame a) where
             reflexive and transitive) will almost always be a complete graph,
             which is uninteresting.
         -}
-        k <- chooseInt (1, S.size carrier * 3)
-        (randomRelation :: Relation a) <- subsetSizeOf carrierSquared k 
+        relationSize <- chooseInt (1, S.size carrier * 3)
+        (randomRelation :: Relation a) <- subsetSizeOf carrierSquared relationSize
         let diagonal = S.filter (uncurry (==)) carrierSquared
         let reflexiveRelation = randomRelation `union` diagonal
         let s4Relation = makeTransitive reflexiveRelation
