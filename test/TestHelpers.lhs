@@ -9,10 +9,13 @@ module TestHelpers where
 import Data.Set
 import qualified Data.Set as S
 import Test.QuickCheck (Arbitrary (arbitrary))
+import TopoModels ( PointedTopoModel, TopoModel )
+import KripkeModels ( PointedS4KripkeModel, S4KripkeModel )
+import ModelConversion ( toPointedTopoModel, toTopoModel )
 
 import SetTheory (closeUnderIntersection, closeUnderUnion, subsetOf)
-import Syntax
-import Topology
+import Syntax ( Form(Imp, Box, Dia, P) )
+import Topology ( fixTopoSpace, TopoSpace(..) )
 
 \end{code}
 
@@ -39,6 +42,24 @@ instance (Arbitrary a, Ord a) => Arbitrary (SSubsetTopoSpace a) where
     subset <- subsetOf space
     anotherSubset <- subsetOf space
     return (SSTS subset anotherSubset (TopoSpace space topo))
+
+data S4KripkeModelTopoModel a = S4KMTM (S4KripkeModel a) (TopoModel a)
+    deriving (Eq, Show)
+
+instance (Arbitrary a, Ord a) => Arbitrary (S4KripkeModelTopoModel a) where
+  arbitrary = do
+    (s4km::S4KripkeModel a) <- arbitrary
+    let (tm :: TopoModel a) = toTopoModel s4km
+    return (S4KMTM s4km tm)
+
+data PointedS4KripkeModelTopoModel a = PS4KMTM (PointedS4KripkeModel a) (PointedTopoModel a)
+    deriving (Eq, Show)
+
+instance (Arbitrary a, Ord a) => Arbitrary (PointedS4KripkeModelTopoModel a) where
+  arbitrary = do
+    (s4km::PointedS4KripkeModel a) <- arbitrary
+    let (tm :: PointedTopoModel a) = toPointedTopoModel s4km
+    return (PS4KMTM s4km tm)
 \end{code}
 
 Example variables from \texttt{Topology} module used for actually running the examples in the test suite.
@@ -80,4 +101,9 @@ topoSpace = TopoSpace (S.fromList [1, 2, 3, 4]) topology
 kAxiom :: Form
 kAxiom = Box (P 1 `Imp` P 2) `Imp` (Box (P 1) `Imp` Box (P 2))
 
+tAxiom :: Form
+tAxiom = P 1 `Imp` Dia (P 1)
+
+fourAxiom :: Form
+fourAxiom = Dia (Dia (P 1)) `Imp` Dia (P 1)
 \end{code}
