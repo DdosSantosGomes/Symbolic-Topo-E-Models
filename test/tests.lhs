@@ -3,26 +3,55 @@
 \begin{code}
 module Main where
 
-import KripkeModels ( PointedS4KripkeModel, S4KripkeModel )
-import SetTheory
-import Topology
-import TopoModels (TopoModel, PointedTopoModel)
-import Syntax
-import Semantics ( Semantics((|=)) )
-import TestHelpers
-
-
-import Test.Hspec
-    ( hspec, describe, it, shouldBe, shouldThrow, anyException )
-import Test.Hspec.QuickCheck ( prop)
-import Test.QuickCheck ()
 import Control.Exception (evaluate)
-
 import Data.Set (Set, isSubsetOf)
 import Data.Set qualified as S
+import Test.Hspec (anyException, describe, hspec, it, shouldBe, shouldThrow)
+import Test.Hspec.QuickCheck (prop)
+import Test.QuickCheck ()
+
+import KripkeModels (PointedS4KripkeModel, S4KripkeModel)
+import Semantics (Semantics ((|=)))
+import SetTheory (arbUnion, closeUnderIntersection, closeUnderUnion)
+import Syntax (Form (Box, Con, Dia, Dis, Imp, Neg, P))
+import TestHelpers (
+    PointedS4KripkeModelTopoModel (PS4KMTM),
+    S4KripkeModelTopoModel (S4KMTM),
+    SSubsetTopoSpace (SSTS),
+    SubsetTopoSpace (STS),
+    badTS,
+    fourAxiom,
+    goodTS,
+    kAxiom,
+    s0,
+    s1,
+    s2,
+    s3,
+    s4,
+    s5,
+    s6,
+    s7,
+    tAxiom,
+    topoSpace,
+    topology,
+ )
+import TopoModels (PointedTopoModel, TopoModel)
+import Topology (
+    TopoSpace (..),
+    closeds,
+    closure,
+    fixTopoSpace,
+    interior,
+    isClopenIn,
+    isClosedIn,
+    isOpenIn,
+    isTopoSpace,
+    openNbds,
+ )
+
 \end{code}
 
-The following lines describe correctness tests for:
+The following codeblock contains correctness tests for:
 \begin{itemize}
   \item \verb|TopoSpace| generation: Check whether Topology axioms are valid.
   \item Interior and closure operators: Check whether Kuratowski axioms
