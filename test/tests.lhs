@@ -3,16 +3,19 @@
 \begin{code}
 module Main where
 
-import Topology
-import TopoModels
+import KripkeModels ( PointedS4KripkeModel, S4KripkeModel )
+import SetTheory 
+import Topology 
+import TopoModels (TopoModel, PointedTopoModel)
 import Syntax
-import Semantics
+import Semantics ( Semantics((|=)) )
 import TestHelpers
+
 
 import Test.Hspec
     ( hspec, describe, it, shouldBe, shouldThrow, anyException )
 import Test.Hspec.QuickCheck ( prop)
-import Test.QuickCheck 
+import Test.QuickCheck () 
 import Control.Exception (evaluate)
 
 import Data.Set (Set, isSubsetOf)
@@ -97,17 +100,17 @@ main = hspec $ do
        evaluate (fixTopoSpace (TopoSpace (S.fromList [1,2,3]) topology)) `shouldThrow` anyException
   describe "TopoModel semantics" $ do
     prop "Validates the K axiom" $ do
-      \ts -> (ts :: TopoModel Int) ||= kAxiom
+      \ts -> (ts :: TopoModel Int) |= kAxiom
     prop "Validates tautology: p or not p" $ do
-      \ts -> (ts :: TopoModel Int) ||= (P 1 `Dis` Neg (P 1))
+      \ts -> (ts :: TopoModel Int) |= (P 1 `Dis` Neg (P 1))
     prop "Validates tautology: p implies p" $ do
-      \ts -> (ts :: TopoModel Int) ||= (P 1 `Imp` P 1)
+      \ts -> (ts :: TopoModel Int) |= (P 1 `Imp` P 1)
     prop "Validates tautology: p implies (q implies (p and q))" $ do
-      \ts -> (ts :: TopoModel Int) ||= (P 1 `Imp` (P 2 `Imp` (P 1 `Con` P 2)))
+      \ts -> (ts :: TopoModel Int) |= (P 1 `Imp` (P 2 `Imp` (P 1 `Con` P 2)))
     prop "Validates modal tautology: Dia p or not Dia p"$ do
-      \ts -> (ts :: TopoModel Int) ||= (Dia (P 1)`Dis` Neg (Dia (P 1)))
+      \ts -> (ts :: TopoModel Int) |= (Dia (P 1)`Dis` Neg (Dia (P 1)))
     prop "Validates modal tautology: Box p implies Dia p"$ do
-      \ts -> (ts :: TopoModel Int) ||= (Box (P 1) `Imp` Dia (P 1))
+      \ts -> (ts :: TopoModel Int) |= (Box (P 1) `Imp` Dia (P 1))
     prop "Cannot satisfy contradiction p and not p" $ do
       \ts -> not ((ts :: PointedTopoModel Int) |= (P 1 `Con` Neg (P 1)))
     prop "Cannot satisfy contradiction ((P or Q) implies R) and not ((P or Q) implies R)" $ do
@@ -116,5 +119,14 @@ main = hspec $ do
       \ts -> not ((ts :: PointedTopoModel Int) |= (Dia (P 1) `Con` Neg (Dia (P 1))))
     prop "Cannot satisfy modal contradiction: Box p and Dia not p" $ do
       \ts -> not ((ts :: PointedTopoModel Int) |= (Box (P 1) `Con` Dia (Neg (P 1))))
+  describe "S4 Kripke Model and TopoModel correspondence" $ do
+    prop "Both validate the K axiom (distribution of box)" $ do
+      \(S4KMTM km tm) -> (km :: S4KripkeModel Int) |= kAxiom && tm |= kAxiom
+    prop "Both validate the T axiom (reflexivity)" $ do
+      \(S4KMTM km tm) -> (km :: S4KripkeModel Int) |= tAxiom && tm |= tAxiom
+    prop "Both validate the 4 axiom (transitivity)" $ do
+      \(S4KMTM km tm) -> (km :: S4KripkeModel Int) |= fourAxiom && tm |= fourAxiom
+    prop "Corresponding KMs and TMs satisfy the same formulas" $ do
+       \(PS4KMTM km tm, f) -> (km :: PointedS4KripkeModel Int) |= (f :: Form) == tm |= f
 
 \end{code}

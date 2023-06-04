@@ -10,10 +10,10 @@ module KripkeModels where
 
 import Data.Set (Set, cartesianProduct, union)
 import qualified Data.Set as S
-import Test.QuickCheck (Arbitrary (arbitrary), suchThat)
+import Test.QuickCheck (Arbitrary (arbitrary), suchThat, chooseInt)
 
 import Models (Valuation, randomVal)
-import SetTheory (Relation, isOfSizeBetween, makeTransitive, setElements, subsetOf)
+import SetTheory (Relation, isOfSizeBetween, makeTransitive, setElements, subsetSizeOf)
 
 \end{code}
 
@@ -59,13 +59,13 @@ instance (Arbitrary a, Ord a) => Arbitrary (S4KripkeFrame a) where
     arbitrary = do
         (carrier :: Set a) <- arbitrary `suchThat` (\set -> isOfSizeBetween set 1 10)
         let carrierSquared = cartesianProduct carrier carrier
-        let relationIsNotTooBig rel = isOfSizeBetween rel 1 (S.size carrier * 2)
         {-
             If no cap is put on this then the resulting frame (after being made
             reflexive and transitive) will almost always be a complete graph,
             which is uninteresting.
         -}
-        (randomRelation :: Relation a) <- subsetOf carrierSquared `suchThat` relationIsNotTooBig
+        k <- chooseInt (1, S.size carrier * 3)
+        (randomRelation :: Relation a) <- subsetSizeOf carrierSquared k 
         let diagonal = S.filter (uncurry (==)) carrierSquared
         let reflexiveRelation = randomRelation `union` diagonal
         let s4Relation = makeTransitive reflexiveRelation
