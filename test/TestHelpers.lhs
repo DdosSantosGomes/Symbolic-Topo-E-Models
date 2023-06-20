@@ -2,6 +2,7 @@
 
 \begin{code}
 
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module TestHelpers where
@@ -19,7 +20,7 @@ import Topology ( fixTopoSpace, TopoSpace(..) )
 
 \end{code}
 
-Artificial new types to give a subset of the space and a topology only used for tests. 
+Artificial new types to give a subset of the space and a topology only used for tests.
 This allows efficient generation of subsets, instead of randomly guessing of subsets as a constraint which
 may take a really long time when testing and may make `QuickCheck` give up.
 
@@ -66,13 +67,13 @@ Example variables from \texttt{Topology} module used for actually running the ex
 
 \begin{code}
 s0 :: Set Int
-s0 = S.fromList [1] 
+s0 = S.fromList [1]
 s1 :: Set Int
-s1 = S.fromList [2] 
+s1 = S.fromList [2]
 s2 :: Set Int
-s2 = S.fromList [3, 4] 
+s2 = S.fromList [3, 4]
 s3 :: Set Int
-s3 = S.fromList [1, 2, 3] 
+s3 = S.fromList [1, 2, 3]
 s4 :: Set Int
 s4 = S.fromList [2, 3]
 s5 :: Set Int

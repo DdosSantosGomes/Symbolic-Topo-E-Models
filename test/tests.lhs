@@ -1,6 +1,9 @@
 \section{Testing}\label{sec:tests}
 
 \begin{code}
+
+{-# LANGUAGE ImportQualifiedPost #-}
+
 module Main where
 
 import Control.Exception (evaluate)
