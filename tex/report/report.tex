@@ -1,13 +1,47 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt, a4paper]{article}
+
+% Macros
 \input{latexmacros.tex}
 \input{../definitions.tex}
 
+
+% Graphics
 \graphicspath{{images/}{./}} % Specifies where to look for included images (trailing slash required)
 
+
+% Packages
+\usepackage{
+    sectsty,
+}
+
+
+% Language, encodings, and font
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{tgpagella}
+
+
+% Title
 \title{Topomodels in Haskell}
-\author{David Álvarez Lombardi \and Paulius Skaisgiris}
+\author{David Quinn Alvarez \\ {\small dqalvarez@proton.me} \and Paulius Skaisgiris \\ {\small paulius.skaisgiris@gmail.com}}
 \date{Sunday, 4 June 2023}
-\hypersetup{pdfauthor={Me}, pdftitle={My Report}}
+
+
+% Hyperlinks
+\definecolor{citegreen}{RGB}{0,170,0}
+\hypersetup{
+    colorlinks=true,
+    citecolor=citegreen,
+    filecolor=magenta,
+    linkcolor=blue,
+    urlcolor=cyan,
+}
+\urlstyle{same}
+
+
+% Formatting
+\sectionfont{\centering}
+\sloppy
 
 \begin{document}
 
