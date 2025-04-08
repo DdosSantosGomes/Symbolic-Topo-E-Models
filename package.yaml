@@ -3,8 +3,9 @@ version: 0.1.0.0
 synopsis: TODO
 description: TODO
 maintainer:
-  - David Quinn Alvarez <dqalvarez@proton.me>
+  - David Alvarez Lombardi <dqalombardi@proton.me>
   - Paulius Skaisgiris <paulius.skaisgiris@gmail.com>
+  - Djanira dos Santos Gomes <djaniradsgomes@gmail.com>
 category: Logic
 
 ghc-options: -Wall
@@ -14,15 +15,22 @@ dependencies:
   - random
   - QuickCheck
   - containers
+  - graphviz
   - hspec
+  - smcdel
+  - decision-diagrams
+  - directory
+  - process
+  - tagged
   - time
+  - unordered-containers
 
 library:
   source-dirs: lib
 
 tests:
   tests:
-    main: tests.lhs
+    main: tests.hs
     source-dirs: test
     dependencies:
       - topomodels
@@ -30,29 +38,16 @@ tests:
       - hspec
 
 benchmarks:
-  bench-BenchFormulaSatisfaction:
+  cake:
     source-dirs: bench
-    main: BenchFormulaSatisfaction.hs
-    ghc-options:  -main-is BenchFormulaSatisfaction
+    main: cake.hs
     dependencies:
       - base
       - topomodels
+      - criterion
       - time
-
-  bench-BenchModelConversion:
-    source-dirs: bench
-    main: BenchModelConversion.hs
-    ghc-options:  -main-is BenchModelConversion
-    dependencies:
-      - base
-      - topomodels
-      - time
-
-  bench-BenchModelGeneration:
-    source-dirs: bench
-    main: BenchModelGeneration.hs
-    ghc-options:  -main-is BenchModelGeneration
-    dependencies:
-      - base
-      - topomodels
-      - time
+      - bytestring
+      - cassava
+      - scientific
+      - vector
+      - split

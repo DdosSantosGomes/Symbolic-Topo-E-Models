@@ -343,3 +343,5 @@ TSWLatexianTemp*
 
 test*.txt
 *.csv
+*lock*.csv*
+example.pdf

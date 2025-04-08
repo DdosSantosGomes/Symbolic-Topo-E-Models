@@ -1,7 +1,5 @@
 {
     "[haskell]": {
-        "editor.defaultFormatter": "haskell.haskell",
-        "editor.formatOnSave": true,
         "editor.rulers": [
             80,
             120
@@ -17,7 +15,6 @@
     "cSpell.enableFiletypes": [
         "literate haskell",
         "!haskell",
-
     ],
     "cSpell.language": "en-GB",
     "cSpell.words": [
@@ -67,5 +64,6 @@
     ],
     "latex-workshop.latex.autoBuild.run": "onSave",
     "latex-workshop.latex.outDir": "%WORKSPACE_FOLDER%/docs",
-    "files.trimTrailingWhitespace": true
+    "files.trimTrailingWhitespace": true,
+    "makefile.configureOnOpen": false
 }

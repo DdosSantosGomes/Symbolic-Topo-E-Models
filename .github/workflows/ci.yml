@@ -1,0 +1,23 @@
+# thanks to https://github.com/rolandtritsch/haskell-aoc-2020
+
+on: [push]
+
+name: CI
+
+jobs:
+  build:
+    name: Build and run tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cache
+      uses: actions/cache@v4
+      with:
+        key: stack
+        path: |
+          ~/.stack
+          ~/.stack-work
+    - uses: actions/checkout@v4
+    - name: Compile all tests
+      run: stack --system-ghc test --no-run-tests
+    - name: Run tests
+      run: stack --system-ghc test

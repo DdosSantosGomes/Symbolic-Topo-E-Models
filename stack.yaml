@@ -1,1 +1,12 @@
-resolver: nightly-2023-04-01
+resolver: lts-22.42
+
+extra-deps:
+- smcdel-1.3.0
+- HasCacBDD-0.2.0.0@sha256:14bcfba6c2b64626cff99673b351547bda115d59124847dd1898ea56a075a29c,1772
+- decision-diagrams-0.2.0.0@sha256:9f82d39f7331f6836784fa89354986e436a4d62d810b8fb2b44dd10c6a0beb85,3415
+- bytestring-0.11.5.3
+- cassava-0.5.3.2
+- scientific-0.3.7.0
+- vector-0.13.1.0
+
+allow-newer: true
